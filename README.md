@@ -30,6 +30,21 @@ NScript 是一整套完整的，基于 .net 的人工智能解决方案。
 
 ### 使用 wpf/winform 进行传统开发
 
+## 领域开发
+
+### 文档处理
+
+### 图像处理
+
+- NScript.Image
+- OpenCVSharp
+
+### 音视频处理
+
+- FFmpeg.AutoGen
+
+### 生物计算
+
 ## 万川智能云
 
 ## 训练与调优
