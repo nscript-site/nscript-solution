@@ -18,7 +18,7 @@ NScript 是一整套完整的，基于 .net 的人工智能解决方案。
 
 ### 使用 NativeAot 进行SDK 开发
 
-### 使用 Restful Api 开发 webapi
+### 使用 Minimal Api 开发 webapi
 
 ### 云原生开发与 Serverless 计算
 
