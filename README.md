@@ -22,6 +22,8 @@ NScript 是一整套完整的，基于 .net 的人工智能解决方案。
 
 ### 云原生开发与 Serverless 计算
 
+### 高性能计算
+
 ## 产品开发
 
 ### 使用 Blazor Server 开发 webapp
