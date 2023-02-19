@@ -11,6 +11,7 @@ NScript 是一整套完整的，基于 .net 的人工智能解决方案。
 - libtorch
 
 ## 人工智能开发解决方案
+
 ### 小型开发/教学
 
 - nscript
@@ -19,5 +20,17 @@ NScript 是一整套完整的，基于 .net 的人工智能解决方案。
 ### 使用 NativeAot 进行SDK 开发
 
 ### 使用 Restful Api 开发 webapi
+
+### 使用 Blazor Server 开发 webapp
+
+### 使用 Blazor Hybrid 进行跨平台开发
+
+### 使用 Avalonia UI 进行跨平台开发
+
+### 使用 Maui 进行跨平台开发
+
+## 常用库
+
+
 
 ## 数据标注
