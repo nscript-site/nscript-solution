@@ -49,6 +49,10 @@ NScript 是一整套完整的，基于 .net 的人工智能解决方案。
 
 - FFmpeg.AutoGen
 
+### RPA
+
+- NScript.AndroidBot
+
 ### 生物计算
 
 ## 万川智能云
