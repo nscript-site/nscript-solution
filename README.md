@@ -10,7 +10,7 @@ NScript 是一整套完整的，基于 .net 的人工智能解决方案。
 - paddleinference
 - libtorch
 
-## 人工智能开发解决方案
+## 人工智能技术开发
 
 ### 使用 dotnet script/nscript 进行脚本开发
 
@@ -19,6 +19,10 @@ NScript 是一整套完整的，基于 .net 的人工智能解决方案。
 ### 使用 NativeAot 进行SDK 开发
 
 ### 使用 Restful Api 开发 webapi
+
+### 云原生开发与 Serverless 计算
+
+## 人工智能产品开发
 
 ### 使用 Blazor Server 开发 webapp
 
