@@ -12,7 +12,7 @@
 
 可通过docker直接下载：
 
-> docker pull hufei96/paddleinference
+> docker pull hufei96/paddleinference:gpu-cuda11.7-cudnn8.4-trt8.4
 
 ## 打包过程
 

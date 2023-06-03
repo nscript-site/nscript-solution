@@ -12,55 +12,23 @@ NScript 是一整套完整的，基于 .net 的人工智能解决方案。
 
 ## 技术开发
 
-### 使用 dotnet script/nscript 进行脚本开发
 
-### 使用 Polyglot 进行 notebook 开发
+## Docker 部署
 
-### 使用 NativeAot 进行SDK 开发
+### linux dotnetsdk 编译环境
 
-### 使用 Minimal Api 开发 webapi
+X64:
 
-### 云原生开发与 Serverless 计算
+[dotnet7-linux-aotsdk](./docker/dotnet7-linux-aotsdk/README.md): 因为 libc 的版本问题，这个镜像打包的程序不支持 ubuntu18.04 下运行，若需要在 ubuntu18.04 下跑，需要使用下面的镜像。
 
-### 高性能计算
+[dotnet7-aotsdk-ubuntu18.04](./docker/ubuntu18.04-dotnet7-aotsdk/README.md): 该镜像打包的程序具备最大的兼容性。
 
-## 产品开发
+ARM64:
 
-### 使用 Blazor Server 开发 webapp
+[dotnet7-linux-arm64-aotsdk](./docker/dotnet7-linux-arm64-aotsdk/README.md): 需要在 Arm64 环境下打包（比如，进行国产化适配）请采用此镜像。运行时，需要 arm64 环境下的 docker。
 
-### 使用 Blazor Hybrid 进行跨平台开发
+### paddle 部署
 
-### 使用 Avalonia UI 进行跨平台开发
+[paddle4.2-cuda11.2](./docker/paddle/paddle4.2-cuda11.2/README.md)
 
-### 使用 Maui 进行跨平台开发
-
-### 使用 wpf/winform 进行传统开发
-
-## 领域开发
-
-### 文档处理
-
-### 图像处理
-
-- NScript.Image
-- OpenCVSharp
-
-### 音视频处理
-
-- FFmpeg.AutoGen
-
-### RPA
-
-- NScript.AndroidBot
-
-### 生物计算
-
-## 万川智能云
-
-## 训练与调优
-
-## 数据标注
-
-## 商业支持
-
-
+[paddle4.2-cuda11.7](./docker/paddle/paddle4.2-cuda11.7/README.md) 
