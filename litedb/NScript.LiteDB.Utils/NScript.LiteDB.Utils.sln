@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33712.159
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NScript.LiteDB.Utils", "NScript.LiteDB.Utils\NScript.LiteDB.Utils.csproj", "{140EE882-8916-4049-9C78-3ABB5CE09BD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NScript.LiteDB.Utils.Test", "NScript.LiteDB.Utils.Test\NScript.LiteDB.Utils.Test.csproj", "{148A404D-85B6-4E47-8327-E06357D16989}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{140EE882-8916-4049-9C78-3ABB5CE09BD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{140EE882-8916-4049-9C78-3ABB5CE09BD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{140EE882-8916-4049-9C78-3ABB5CE09BD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{140EE882-8916-4049-9C78-3ABB5CE09BD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{148A404D-85B6-4E47-8327-E06357D16989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{148A404D-85B6-4E47-8327-E06357D16989}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{148A404D-85B6-4E47-8327-E06357D16989}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{148A404D-85B6-4E47-8327-E06357D16989}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9DD2665-3BA4-45AD-BFA2-1BDCEA2312B6}
+	EndGlobalSection
+EndGlobal
