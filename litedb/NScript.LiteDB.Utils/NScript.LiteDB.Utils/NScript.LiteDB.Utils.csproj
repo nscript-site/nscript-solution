@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>6.0.1.4</Version>
+    <Version>6.0.1.8</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/nscript-site/nscript-solution</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

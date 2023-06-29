@@ -14,7 +14,7 @@ namespace NScript.LiteDB.Services
         public long Length { get; set; }
     }
 
-    public class FileDataBucket : DataService<FileData>
+    internal class FileDataBucket : DataService<FileData>
     {
         protected override string DBName { get; } = "service_files";
 
@@ -44,7 +44,9 @@ namespace NScript.LiteDB.Services
             DateTime now = DateTime.Now;
             String bucket = now.Year.ToString() + now.Month.ToString().PadLeft(2, '0') + now.Day.ToString().PadLeft(2, '0');
             String id = Guid.NewGuid().ToString("N");
-            return bucket + id + (fileExtention ?? "");
+            if (String.IsNullOrEmpty(fileExtention)) return bucket + id;
+            if (fileExtention.StartsWith('.') == false) fileExtention = '.' + fileExtention;
+            return bucket + id + fileExtention;
         }
 
         internal static FileDataBucket FindBucket(String fileId)
@@ -55,7 +57,14 @@ namespace NScript.LiteDB.Services
             return bucket;
         }
 
-        internal static bool Save(String fileId, Byte[] data)
+        public static String Save(Byte[] data, String fileExtention)
+        {
+            String fileId = NextFileId(fileExtention);
+            Save(fileId, data);
+            return fileId;
+        }
+
+        protected static bool Save(String fileId, Byte[] data)
         {
             if (data == null) return false;
             FileDataBucket bucket = FindBucket(fileId);
@@ -64,7 +73,7 @@ namespace NScript.LiteDB.Services
             return true;
         }
 
-        internal static byte[]? Find(String fileId)
+        public static byte[]? Find(String fileId)
         {
             FileDataBucket bucket = FindBucket(fileId);
             if (bucket == null) throw new ArgumentException("fileId is not valid");

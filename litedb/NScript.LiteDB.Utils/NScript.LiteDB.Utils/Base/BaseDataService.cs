@@ -8,7 +8,7 @@ using LiteDB;
 
 namespace NScript.LiteDB
 {
-    public abstract class BaseDataServie
+    public abstract class BaseDataService
     {
         protected String DefaultBaseDir
         {

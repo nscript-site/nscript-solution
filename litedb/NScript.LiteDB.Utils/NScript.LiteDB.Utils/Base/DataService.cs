@@ -8,9 +8,21 @@ using System.Threading.Tasks;
 
 namespace NScript.LiteDB
 {
-    public class DataService<TEntity> : BaseDataServie where TEntity : class
+    public class DataService<TEntity> : BaseDataService where TEntity : class
     {
         protected String CollectionName { get; set; } = "default";
+
+        protected readonly string _bucketName;
+
+        public DataService(string bucketName = null)
+        {
+            _bucketName = bucketName;
+        }
+
+        private string GetBucketName()
+        {
+            return String.IsNullOrEmpty(_bucketName)?String.Empty: _bucketName;
+        }
 
         protected override string DBName
         {
@@ -18,7 +30,16 @@ namespace NScript.LiteDB
             {
                 if (_dbName == null)
                 {
-                    _dbName = GetDBName();
+                    String dbName = GetDBName();
+                    String bucketName = GetBucketName();
+                    if(String.IsNullOrEmpty(bucketName) == false)
+                    {
+                        if (dbName.EndsWith(".db"))
+                            dbName = dbName.Substring(0, dbName.Length - 3) + "#" + _bucketName + ".db";
+                        else
+                            dbName += "#" + _bucketName;
+                    }
+                    _dbName = dbName;
                 }
                 return _dbName;
             }
@@ -94,7 +115,7 @@ namespace NScript.LiteDB
             return new Indexer<TEntity>();
         }
 
-        protected void UsingCollection(Action<ILiteCollection<TEntity>> onCollection)
+        public void UsingCollection(Action<ILiteCollection<TEntity>> onCollection)
         {
             if (CollectionName == null || onCollection == null) return;
             using (var db = new LiteDatabase(GetConnString()))
