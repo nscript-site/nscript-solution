@@ -1,4 +1,5 @@
 ﻿using LiteDB;
+using NScript.LiteDB.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,23 +24,46 @@ namespace NScript.LiteDB.Services
             col.EnsureIndex(x => x.FileId);
         }
 
+        internal string BucketBaseDir { get; set; } = LiteDBSetting.DefaultDataDirectory;
+
         protected override String GetBaseDir()
         {
-            return GetSubDir("sys_services_files", true);
+            return GetSubDir(BucketBaseDir, "litedb_files", true);
         }
 
-        public FileDataBucket(String bucketName)
+        public FileDataBucket(String baseDir, String bucketName)
         {
+            if (String.IsNullOrEmpty(baseDir) == false)
+            {
+                this.BucketBaseDir = baseDir;
+            }
+
             this.DBName = "files_bucket_" + bucketName + ".db";
+        }
+
+        public bool DeleteFile(String fileId)
+        {
+            if (String.IsNullOrEmpty(fileId)) return false;
+
+            int count = 0;
+            this.UsingCollection(
+                x =>
+                {
+                    count = x.DeleteMany(item=>item.FileId == fileId);
+                }
+                );
+            return count > 0;
         }
     }
 
     /// <summary>
     /// 本地文件存储
     /// </summary>
-    public class FileStorageService
+    public class FileStorageService : IFileStorageService
     {
-        public static String NextFileId(String fileExtention = "")
+        public string BaseDir { get; set; } = LiteDBSetting.DefaultDataDirectory;
+
+        public String NextFileId(String fileExtention = "")
         {
             DateTime now = DateTime.Now;
             String bucket = now.Year.ToString() + now.Month.ToString().PadLeft(2, '0') + now.Day.ToString().PadLeft(2, '0');
@@ -49,22 +73,44 @@ namespace NScript.LiteDB.Services
             return bucket + id + fileExtention;
         }
 
-        internal static FileDataBucket FindBucket(String fileId)
+        /// <summary>
+        /// 删除指定 fileId 的文件
+        /// </summary>
+        /// <param name="fileId"></param>
+        /// <returns></returns>
+        public bool Delete(String fileId)
+        {
+            if(fileId == null) return false;
+            
+            var bucket = FindBucket(fileId);
+            if(bucket == null) return false;
+            return bucket.DeleteFile(fileId); ;
+        }
+
+        internal FileDataBucket FindBucket(String fileId)
         {
             if (fileId == null || fileId.Length < 10) return null;
             String bucketId = fileId.Substring(0, 8);
-            FileDataBucket bucket = new FileDataBucket(bucketId);
+            FileDataBucket bucket = new FileDataBucket(BaseDir, bucketId);
             return bucket;
         }
 
-        public static String Save(Byte[] data, String fileExtention)
+        public bool Save(String fileId, Byte[] data)
+        {
+            if (String.IsNullOrEmpty(fileId)) throw new ArgumentException(nameof(fileId));
+
+            SaveInternal(fileId, data);
+            return true;
+        }
+
+        public String Save(Byte[] data, String fileExtention)
         {
             String fileId = NextFileId(fileExtention);
-            Save(fileId, data);
+            SaveInternal(fileId, data);
             return fileId;
         }
 
-        protected static bool Save(String fileId, Byte[] data)
+        protected bool SaveInternal(String fileId, Byte[] data)
         {
             if (data == null) return false;
             FileDataBucket bucket = FindBucket(fileId);
@@ -73,7 +119,7 @@ namespace NScript.LiteDB.Services
             return true;
         }
 
-        public static byte[]? Find(String fileId)
+        public byte[]? Find(String fileId)
         {
             FileDataBucket bucket = FindBucket(fileId);
             if (bucket == null) throw new ArgumentException("fileId is not valid");

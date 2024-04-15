@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>NScript.LiteDB.Services</RootNamespace>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>6.0.2.0</Version>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/nscript-site/nscript-solution</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>rocksdb</PackageTags>
+    <PackageProjectUrl>https://github.com/nscript-site/nscript-solution</PackageProjectUrl>
+    <Copyright>geblab.com</Copyright>
+    <Title>A LiteDB utils library of RocksDB Extention</Title>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IncludeSymbols>False</IncludeSymbols>
+    <Company>geblab</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RocksDB" Version="8.11.3.46984" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NScript.LiteDB.Utils\NScript.LiteDB.Utils.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NScript.LiteDB.RocksDBExtention\NScript.LiteDB.RocksDBExtention.csproj" />
     <ProjectReference Include="..\NScript.LiteDB.Utils\NScript.LiteDB.Utils.csproj" />
   </ItemGroup>
 

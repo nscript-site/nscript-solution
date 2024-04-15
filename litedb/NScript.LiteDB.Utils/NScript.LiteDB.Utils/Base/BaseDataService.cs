@@ -39,9 +39,14 @@ namespace NScript.LiteDB
 
         protected String GetSubDir(String dirName, bool createIfNotExists = false)
         {
+            return GetSubDir(DefaultBaseDir, dirName, createIfNotExists);
+        }
+
+        protected String GetSubDir(String baseDir, String dirName, bool createIfNotExists = false)
+        {
             if (dirName == null) throw new ArgumentNullException(nameof(dirName));
 
-            String path = Path.Combine(DefaultBaseDir, dirName);
+            String path = Path.Combine(baseDir, dirName);
 
             if(createIfNotExists == true)
             {

@@ -1,6 +1,7 @@
 ﻿
 
 using NScript.LiteDB;
+using NScript.LiteDB.Services;
 using NScript.LiteDB.Utils.Test.Data;
 
 void TestTypedDataService()
@@ -16,4 +17,41 @@ void TestTypedDataService()
     Console.WriteLine(service3.Count());
 }
 
-TestTypedDataService();
+void TestFileStorageService(String? dir = null)
+{
+    var storage = new FileStorageService();
+    if (dir != null) storage.BaseDir = dir;
+
+    byte[] data = new byte[10];
+    var fileId = storage.Save(data, ".dat");
+    Console.WriteLine(fileId);
+    var item = storage.Find(fileId);
+    Console.WriteLine(item.Length);
+    var rtn = storage.Delete(fileId);
+    Console.WriteLine(rtn);
+    item = storage.Find(fileId);
+    if (item == null) Console.WriteLine("Delete OK!");
+}
+
+void TestRocksDBFileStorageService(String? dir = null)
+{
+    var storage = new RocksDBFileStorageService();
+    if (dir != null) storage.BaseDir = dir;
+
+    byte[] data = new byte[10];
+    var fileId = storage.Save(data, ".dat");
+    Console.WriteLine(fileId);
+    var item = storage.Find(fileId);
+    Console.WriteLine(item.Length);
+    var rtn = storage.Delete(fileId);
+    Console.WriteLine(rtn);
+    item = storage.Find(fileId);
+    if (item == null) Console.WriteLine("Delete OK!");
+}
+
+
+//TestTypedDataService();
+TestFileStorageService();
+TestFileStorageService("test_data_litedb");
+TestRocksDBFileStorageService();
+TestRocksDBFileStorageService("test_data_rocksdb");

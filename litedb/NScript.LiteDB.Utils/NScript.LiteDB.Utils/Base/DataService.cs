@@ -223,14 +223,16 @@ namespace NScript.LiteDB
             );
         }
 
-        public void Delete(BsonValue bsonId)
+        public bool Delete(BsonValue bsonId)
         {
+            var rtn = false;
             UsingCollection(
                 col =>
                 {
-                    col.Delete(bsonId);
+                    rtn = col.Delete(bsonId);
                 }
             );
+            return rtn;
         }
     }
 }
