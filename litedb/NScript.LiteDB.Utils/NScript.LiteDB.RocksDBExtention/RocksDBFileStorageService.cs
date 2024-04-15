@@ -18,6 +18,8 @@ internal class RocksDBFileDataBucket
 
     internal string BucketBaseDir { get; set; } = LiteDBSetting.DefaultDataDirectory;
 
+    internal RocksDBFileStorageService Owner { get; set; }
+
     protected String GetDir()
     {
         return GetDir(BucketBaseDir, "rocksdb_files", true);
@@ -38,12 +40,14 @@ internal class RocksDBFileDataBucket
         return path;
     }
 
-    public RocksDBFileDataBucket(String baseDir, String bucketName)
+    public RocksDBFileDataBucket(String baseDir, String bucketName, RocksDBFileStorageService owner)
     {
         if (String.IsNullOrEmpty(baseDir) == false)
         {
             this.BucketBaseDir = baseDir;
         }
+
+        this.Owner = owner;
 
         this.DBName = "rocksdb_bucket_" + bucketName;
         DBPath = GetDir();
@@ -107,26 +111,20 @@ internal class RocksDBFileDataBucket
     private void UsingDB(Action<RocksDb> onDatabase)
     {
         if (onDatabase == null) return;
-        var options = new DbOptions()
-            .SetCreateIfMissing(true);
-        try
-        {
-            using (var db = RocksDb.Open(options, DBPath))
-            {
-                onDatabase(db);
-            }
-        }
-        catch(Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+        Owner.WithDB(DBPath, onDatabase);
     }
+}
+
+internal class RocksDbInfo
+{
+    public string DBPath { get; set; }
+    public RocksDb DataBase { get; set; }
 }
 
 /// <summary>
 /// 本地文件存储
 /// </summary>
-public class RocksDBFileStorageService : IFileStorageService
+public class RocksDBFileStorageService : IFileStorageService, IDisposable
 {
     public String NextFileId(String fileExtention = "")
     {
@@ -139,6 +137,58 @@ public class RocksDBFileStorageService : IFileStorageService
     }
 
     public string BaseDir { get; set; } = LiteDBSetting.DefaultDataDirectory;
+
+    /// <summary>
+    /// 设置数据库的 Options。默认为创建数据库
+    /// </summary>
+    public DbOptions Options { get; set; } = new DbOptions().SetCreateIfMissing(true);
+
+    private int _maxCacheBuckets = 100;
+    private List<RocksDbInfo> _cache = new List<RocksDbInfo>();
+
+    public RocksDBFileStorageService(int maxCacheBuckets = 100)
+    {
+        _maxCacheBuckets = Math.Max(1,maxCacheBuckets);
+    }
+
+    internal RocksDbInfo GetOrCreateDb(string dbPath)
+    {
+        RocksDbInfo? db = null;
+        lock (_cache)
+        {
+            db = _cache.FirstOrDefault(x => x.DBPath == dbPath);
+            if (db == null)
+            {
+                var option = Options ?? new DbOptions().SetCreateIfMissing(true);
+                db = new RocksDbInfo() { DBPath = dbPath, DataBase = RocksDb.Open(option, dbPath) };
+                _cache.Add(db);
+            }
+
+            if (_cache.Count > _maxCacheBuckets)
+            {
+                var rdb = _cache[0];
+                rdb?.DataBase?.Dispose();
+                _cache.RemoveAt(0);
+            }
+        }
+
+        return db!;
+    }
+
+    internal void WithDB(string dbPath, Action<RocksDb> onDatabase)
+    {
+        if (onDatabase == null) return;
+
+        try
+        {
+            var dbInfo = GetOrCreateDb(dbPath);
+            onDatabase(dbInfo.DataBase);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
 
     /// <summary>
     /// 删除指定 fileId 的文件
@@ -158,7 +208,7 @@ public class RocksDBFileStorageService : IFileStorageService
     {
         if (fileId == null || fileId.Length < 10) return null;
         String bucketId = fileId.Substring(0, 8);
-        var bucket = new RocksDBFileDataBucket(BaseDir, bucketId);
+        var bucket = new RocksDBFileDataBucket(BaseDir, bucketId, this);
         return bucket;
     }
 
@@ -193,5 +243,17 @@ public class RocksDBFileStorageService : IFileStorageService
         if (bucket.Exists() == false) return null;
         var find = bucket.FindOne(fileId);
         return find?.Data ?? null;
+    }
+
+    public void Dispose()
+    {
+        lock (_cache)
+        {
+            foreach(var item in _cache)
+            {
+                item?.DataBase?.Dispose();
+            }
+            _cache.Clear();
+        }
     }
 }

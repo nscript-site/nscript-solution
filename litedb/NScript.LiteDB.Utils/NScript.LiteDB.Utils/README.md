@@ -70,6 +70,13 @@ public interface IFileStorageService
     /// <param name="data"></param>
     /// <returns></returns>
     public bool Save(String fileId, Byte[] data);
+
+    /// <summary>
+    /// 根据文件Id查找文件
+    /// </summary>
+    /// <param name="fileId"></param>
+    /// <returns></returns>
+    public byte[]? Find(String fileId);
 }
 ```
 
