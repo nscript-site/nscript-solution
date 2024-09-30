@@ -23,5 +23,11 @@ public class Book
 
 public class DefaultBook
 {
-    public String Name { get; set; }
+    public String Name { get; set; } = "我们";
+}
+
+
+struct Foo
+{
+    public string Name;
 }

@@ -5,7 +5,12 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RocksDB" Version="8.11.3.46984" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\NScript.LiteDB.RocksDBExtention\NScript.LiteDB.RocksDBExtention.csproj" />

@@ -3,6 +3,7 @@
 using NScript.LiteDB;
 using NScript.LiteDB.Services;
 using NScript.LiteDB.Utils.Test.Data;
+using RocksDbSharp;
 using System.Diagnostics;
 
 void TestTypedDataService()
@@ -85,9 +86,44 @@ void TestRocksDBFileStorageServicePerformance(int count)
     Console.WriteLine($"Load {count} files, elapsed {ts2} ms");
 }
 
+void TestRocksDB()
+{
+    var db = RocksDb.Open(new DbOptions().SetCreateIfMissing(true), "test.db");
+    byte[] query = new byte[8];
+    new Span<byte>(query).Fill(0x03);
+    byte[] keys = new byte[10];
+    byte[] values = new byte[10];
+    new Span<byte>(keys).Fill(0x01);
+    new Span<byte>(values).Fill(0x01);
+    db.Put(keys,values);
+    new Span<byte>(keys).Fill(0x03);
+    new Span<byte>(values).Fill(0x03);
+    db.Put(keys, values);
+    new Span<byte>(keys).Fill(0x02);
+    var it = db.NewIterator().Seek(query);
+    var valid = it.Valid();
+    var val = it.Value();
+    Console.WriteLine(valid);
+    Console.WriteLine(it.Key()[0]);
+    Console.WriteLine(val.Length);
+    Console.WriteLine(val[0]);
+}
+
+unsafe void TestFoo()
+{
+    //var span = stackalloc Foo[10];
+    var s = new Foo();
+    s.Name = "Hello World!";
+    var p = &s;
+    Console.WriteLine(p->Name);
+}
+
+TestFoo();
+
 //TestTypedDataService();
 //TestFileStorageService();
 //TestFileStorageService("test_data_litedb");
 //TestRocksDBFileStorageService();
 //TestRocksDBFileStorageService("test_data_rocksdb");
-TestRocksDBFileStorageServicePerformance(1000);
+//TestRocksDBFileStorageServicePerformance(1000);
+//TestRocksDB();

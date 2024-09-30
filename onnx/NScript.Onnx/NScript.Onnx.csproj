@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/nscript-site/nscript-solution</PackageProjectUrl>
+    <Copyright>mitlicense</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Title>NScript.Onnx</Title>
+    <Description>一个简单的 Onnx helper 库，可以简化 onnx 相关应用的开发</Description>
+    <VersionPrefix>1.0.0.1</VersionPrefix>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.18.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+</Project>
