@@ -1,12 +1,7 @@
 ﻿using LiteDB;
 using NScript.LiteDB.Utils;
 using RocksDbSharp;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace NScript.LiteDB.Services;
 
@@ -22,14 +17,14 @@ internal class RocksDBFileDataBucket
 
     protected String GetDir()
     {
-        return GetDir(BucketBaseDir, "rocksdb_files", true);
+        return GetDir(BucketBaseDir, "rocksdb_files", DBName, true);
     }
 
-    protected String GetDir(String baseDir, String dirName, bool createIfNotExists = false)
+    protected static String GetDir(String baseDir, String dirName, string dbName, bool createIfNotExists = false)
     {
         if (dirName == null) throw new ArgumentNullException(nameof(dirName));
 
-        String path = Path.Combine(baseDir, dirName, DBName);
+        String path = Path.Combine(baseDir, dirName, dbName);
 
         if (createIfNotExists == true)
         {
@@ -40,7 +35,15 @@ internal class RocksDBFileDataBucket
         return path;
     }
 
-    public RocksDBFileDataBucket(String baseDir, String bucketName, RocksDBFileStorageService owner)
+    public string BucketId { get; private set; }
+
+    public static bool IsBucketExists(string baseDir, string bucketId)
+    {
+        var path = Path.Combine(baseDir, "rocksdb_files", "rocksdb_bucket_" + bucketId);
+        return Directory.Exists(path);
+    }
+
+    public RocksDBFileDataBucket(String baseDir, String bucketId, RocksDBFileStorageService owner)
     {
         if (String.IsNullOrEmpty(baseDir) == false)
         {
@@ -49,8 +52,11 @@ internal class RocksDBFileDataBucket
 
         this.Owner = owner;
 
-        this.DBName = "rocksdb_bucket_" + bucketName;
+        this.BucketId = bucketId;
+
+        this.DBName = "rocksdb_bucket_" + bucketId;
         DBPath = GetDir();
+        Console.WriteLine($"Create RocksDBFileDataBucket: {DBPath}");
     }
 
     public bool DeleteFile(String fileId)
@@ -119,6 +125,14 @@ internal class RocksDbInfo
 {
     public string DBPath { get; set; }
     public RocksDb DataBase { get; set; }
+    public bool Using { get; set; }
+}
+
+public enum DBBucketStrategy
+{
+    ByDay,
+    ByMonth,
+    ByYear
 }
 
 /// <summary>
@@ -129,11 +143,21 @@ public class RocksDBFileStorageService : IFileStorageService, IDisposable
     public String NextFileId(String fileExtention = "")
     {
         DateTime now = DateTime.Now;
-        String bucket = now.Year.ToString() + now.Month.ToString().PadLeft(2, '0') + now.Day.ToString().PadLeft(2, '0');
+        String bucket = GetBucketId(ref now);
         String id = Guid.NewGuid().ToString("N");
         if (String.IsNullOrEmpty(fileExtention)) return bucket + id;
         if (fileExtention.StartsWith('.') == false) fileExtention = '.' + fileExtention;
         return bucket + id + fileExtention;
+    }
+
+    private string GetBucketId(ref DateTime now)
+    {
+        if(BucketStrategy == DBBucketStrategy.ByDay) 
+            return now.Year.ToString() + now.Month.ToString().PadLeft(2, '0') + now.Day.ToString().PadLeft(2, '0');
+        else if(BucketStrategy == DBBucketStrategy.ByMonth)
+            return now.Year.ToString() + now.Month.ToString().PadLeft(2, '0') + "00";
+        else
+            return now.Year.ToString() + "0000";
     }
 
     public string BaseDir { get; set; } = LiteDBSetting.DefaultDataDirectory;
@@ -143,13 +167,18 @@ public class RocksDBFileStorageService : IFileStorageService, IDisposable
     /// </summary>
     public DbOptions Options { get; set; } = new DbOptions().SetCreateIfMissing(true);
 
-    private int _maxCacheBuckets = 100;
+    private int _maxCacheBuckets = 6;
     private List<RocksDbInfo> _cache = new List<RocksDbInfo>();
 
-    public RocksDBFileStorageService(int maxCacheBuckets = 100)
+    public DBBucketStrategy BucketStrategy { get; private set; }
+
+    public RocksDBFileStorageService(DBBucketStrategy bucketStrategy = DBBucketStrategy.ByMonth, int maxCacheBuckets = 6)
     {
         _maxCacheBuckets = Math.Max(1,maxCacheBuckets);
+        BucketStrategy = bucketStrategy;
     }
+
+    private RocksDBFileDataBucket? LastBucket = null;
 
     internal RocksDbInfo GetOrCreateDb(string dbPath)
     {
@@ -166,9 +195,17 @@ public class RocksDBFileStorageService : IFileStorageService, IDisposable
 
             if (_cache.Count > _maxCacheBuckets)
             {
-                var rdb = _cache[0];
-                rdb?.DataBase?.Dispose();
-                _cache.RemoveAt(0);
+                // 移除旧的
+                try
+                {
+                    var rdb = _cache[0];
+                    rdb?.DataBase?.Dispose();
+                    _cache.RemoveAt(0);
+                }
+                catch(Exception ex)
+                { 
+                    Console.WriteLine(ex.ToString());
+                }
             }
         }
 
@@ -179,14 +216,21 @@ public class RocksDBFileStorageService : IFileStorageService, IDisposable
     {
         if (onDatabase == null) return;
 
+        RocksDbInfo? dbInfo = null;
         try
         {
-            var dbInfo = GetOrCreateDb(dbPath);
+            dbInfo = GetOrCreateDb(dbPath);
+            dbInfo.Using = true;
             onDatabase(dbInfo.DataBase);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            if(dbInfo != null)
+                dbInfo.Using = false;
         }
     }
 
@@ -204,11 +248,29 @@ public class RocksDBFileStorageService : IFileStorageService, IDisposable
         return bucket.DeleteFile(fileId); ;
     }
 
-    internal RocksDBFileDataBucket FindBucket(String fileId)
+    public bool IsValid(String fileId)
     {
-        if (fileId == null || fileId.Length < 10) return null;
+        if (fileId == null || fileId.Length < 10) return false;
+        for(int i = 0; i < 8; i++)
+        {
+            if (Char.IsNumber(fileId[i]) == false) return false;
+        }
+        return true;
+    }
+
+    internal RocksDBFileDataBucket? FindBucket(String fileId, bool creatIfNotExist = true)
+    {
+        if (IsValid(fileId) == false) return null;
         String bucketId = fileId.Substring(0, 8);
+
+        if (LastBucket?.BucketId == bucketId)  // 最近的 bucket 极大可能是所需要的 bucket
+            return LastBucket;
+
+        if (creatIfNotExist == false && RocksDBFileDataBucket.IsBucketExists(BaseDir, bucketId) == false)
+            return null;
+
         var bucket = new RocksDBFileDataBucket(BaseDir, bucketId, this);
+        LastBucket = bucket;
         return bucket;
     }
 
@@ -230,7 +292,7 @@ public class RocksDBFileStorageService : IFileStorageService, IDisposable
     protected bool SaveInternal(String fileId, Byte[] data)
     {
         if (data == null) return false;
-        RocksDBFileDataBucket bucket = FindBucket(fileId);
+        RocksDBFileDataBucket? bucket = FindBucket(fileId);
         if (bucket == null) throw new ArgumentException("fileId is not valid");
         bucket.Insert(new FileData() { FileId = fileId, Data = data, Length = data.LongLength });
         return true;
@@ -238,8 +300,8 @@ public class RocksDBFileStorageService : IFileStorageService, IDisposable
 
     public byte[]? Find(String fileId)
     {
-        RocksDBFileDataBucket bucket = FindBucket(fileId);
-        if (bucket == null) throw new ArgumentException("fileId is not valid");
+        RocksDBFileDataBucket? bucket = FindBucket(fileId, false);
+        if (bucket == null) return null;
         if (bucket.Exists() == false) return null;
         var find = bucket.FindOne(fileId);
         return find?.Data ?? null;

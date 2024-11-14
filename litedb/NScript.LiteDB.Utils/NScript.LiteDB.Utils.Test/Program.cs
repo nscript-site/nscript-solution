@@ -86,6 +86,54 @@ void TestRocksDBFileStorageServicePerformance(int count)
     Console.WriteLine($"Load {count} files, elapsed {ts2} ms");
 }
 
+void TestRocksDBFileStorageServiceByBucketPerformance(int count)
+{
+    var storage = new RocksDBFileStorageService(DBBucketStrategy.ByMonth,12);
+    storage.BaseDir = DateTime.Now.ToFileTime().ToString();
+
+    byte[] data = new byte[1024];
+
+    List<String> files = new List<String>();
+
+    DateTime dateTime = DateTime.Now;
+
+    Random r = new Random();
+
+    string GetNextFileId()
+    {
+        var nextFileId = storage.NextFileId(".dat");
+        var month = r.Next(0, 12).ToString().PadLeft(2,'0');
+        return nextFileId.Substring(0,4) + month + "00" + nextFileId.Substring(8);
+    }
+
+
+    Stopwatch sw = new Stopwatch();
+    sw.Start();
+    for (int i = 0; i < count; i++)
+    {
+        var fileId = GetNextFileId();
+        storage.Save(fileId, data);
+        files.Add(fileId);
+        Console.WriteLine($"{i + 1}/{count}:{fileId}");
+    }
+    sw.Stop();
+
+    long ts1 = sw.ElapsedMilliseconds;
+
+    sw = new Stopwatch();
+    for (int i = 0; i < count; i++)
+    {
+        var fileId = files[i];
+        var bytes = storage.Find(fileId);
+        Console.WriteLine($"{i + 1}/{count}: load file {fileId}, {bytes?.Length ?? 0} bytes");
+    }
+    sw.Stop();
+    long ts2 = sw.ElapsedMilliseconds;
+
+    Console.WriteLine($"Save {count} files, elapsed {ts1} ms");
+    Console.WriteLine($"Load {count} files, elapsed {ts2} ms");
+}
+
 void TestRocksDB()
 {
     var db = RocksDb.Open(new DbOptions().SetCreateIfMissing(true), "test.db");
@@ -118,7 +166,7 @@ unsafe void TestFoo()
     Console.WriteLine(p->Name);
 }
 
-TestFoo();
+//TestFoo();
 
 //TestTypedDataService();
 //TestFileStorageService();
@@ -126,4 +174,5 @@ TestFoo();
 //TestRocksDBFileStorageService();
 //TestRocksDBFileStorageService("test_data_rocksdb");
 //TestRocksDBFileStorageServicePerformance(1000);
+TestRocksDBFileStorageServiceByBucketPerformance(1000);
 //TestRocksDB();
