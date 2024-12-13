@@ -37,7 +37,7 @@ void TestFileStorageService(String? dir = null)
 
 void TestRocksDBFileStorageService(String? dir = null)
 {
-    var storage = new RocksDBFileStorageService();
+    var storage = new RocksDBShardingOnTimeFileStorageService();
     if (dir != null) storage.BaseDir = dir;
 
     byte[] data = new byte[10];
@@ -53,7 +53,7 @@ void TestRocksDBFileStorageService(String? dir = null)
 
 void TestRocksDBFileStorageServicePerformance(int count)
 {
-    var storage = new RocksDBFileStorageService();
+    var storage = new RocksDBShardingOnTimeFileStorageService();
     storage.BaseDir = DateTime.Now.ToFileTime().ToString();
 
     byte[] data = new byte[1024];
@@ -88,7 +88,7 @@ void TestRocksDBFileStorageServicePerformance(int count)
 
 void TestRocksDBFileStorageServiceByBucketPerformance(int count)
 {
-    var storage = new RocksDBFileStorageService(DBBucketStrategy.ByMonth,12);
+    var storage = new RocksDBShardingOnTimeFileStorageService(ShardingOnTimeStrategy.ByMonth,12);
     storage.BaseDir = DateTime.Now.ToFileTime().ToString();
 
     byte[] data = new byte[1024];
@@ -166,13 +166,61 @@ unsafe void TestFoo()
     Console.WriteLine(p->Name);
 }
 
-//TestFoo();
+void TestShardingOnTimeDataService()
+{
+    var databaseName = "sharding_db";
+    var now = DateTime.Now;
+    var service1 = new ShardingOnTimeDataService<Book>(databaseName, ShardingOnTimeStrategy.ByDay, now);
+    var service2 = new ShardingOnTimeDataService<Book>(databaseName, ShardingOnTimeStrategy.ByDay, now + TimeSpan.FromDays(2));
+    var service3 = new ShardingOnTimeDataService<Book2>(databaseName, ShardingOnTimeStrategy.ByDay, now);
+    var service4 = new ShardingOnTimeDataService<Book2>(databaseName, ShardingOnTimeStrategy.ByDay, now + TimeSpan.FromDays(2));
+    service1.Insert(new Book() { Name = "book1" });
+    service2.Insert(new Book() { Name = "book2" });
+    service3.Insert(new Book2() { Name = "book1" });
+    service4.Insert(new Book2() { Name = "book2" });
+    Console.WriteLine(service1.Count());
+    Console.WriteLine(service2.Count());
+    Console.WriteLine(service3.Count());
+    Console.WriteLine(service4.Count());
+}
 
+void TestLocalShardingOnTimeFileStorageService()
+{
+    var storage = new LocalShardingOnTimeFileStorageService(ShardingOnTimeStrategy.ByDay);
+    var data1 = new byte[10];
+    data1[0] = 1;
+    var data2 = new byte[20*1024*1024];
+    data2[0] = 2;
+
+    var fildId1 = storage.NextFileId();
+    var fildId2 = storage.NextFileId();
+
+    storage.Save(fildId1, data1);
+    storage.Save(fildId2, data2);
+
+    var find1 = storage.Find(fildId1);
+    var find2 = storage.Find(fildId2);
+
+    if (find1 != null) Console.WriteLine($"find1[0] is {find1[0]}");
+        else Console.WriteLine("find1 is null");
+    if (find2 != null) Console.WriteLine($"find2[0] is {find2[0]}");
+        else Console.WriteLine("find2 is null");
+
+    var del1 = storage.Delete(fildId1);
+    var del2 = storage.Delete(fildId2);
+
+    Console.WriteLine($"del file1 {del1}");
+    Console.WriteLine($"del file2 {del2}");
+}
+
+//TestFoo();
+//TestShardingOnTimeDataService();
+TestLocalShardingOnTimeFileStorageService();
 //TestTypedDataService();
 //TestFileStorageService();
 //TestFileStorageService("test_data_litedb");
 //TestRocksDBFileStorageService();
 //TestRocksDBFileStorageService("test_data_rocksdb");
 //TestRocksDBFileStorageServicePerformance(1000);
-TestRocksDBFileStorageServiceByBucketPerformance(1000);
+//TestRocksDBFileStorageServiceByBucketPerformance(1000);
 //TestRocksDB();

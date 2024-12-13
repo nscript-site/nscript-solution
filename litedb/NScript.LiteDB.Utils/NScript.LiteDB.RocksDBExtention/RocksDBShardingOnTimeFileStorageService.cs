@@ -1,7 +1,6 @@
 ﻿using LiteDB;
 using NScript.LiteDB.Utils;
 using RocksDbSharp;
-using System.Xml.Linq;
 
 namespace NScript.LiteDB.Services;
 
@@ -13,7 +12,7 @@ internal class RocksDBFileDataBucket
 
     internal string BucketBaseDir { get; set; } = LiteDBSetting.DefaultDataDirectory;
 
-    internal RocksDBFileStorageService Owner { get; set; }
+    internal RocksDBShardingOnTimeFileStorageService Owner { get; set; }
 
     protected String GetDir()
     {
@@ -43,7 +42,7 @@ internal class RocksDBFileDataBucket
         return Directory.Exists(path);
     }
 
-    public RocksDBFileDataBucket(String baseDir, String bucketId, RocksDBFileStorageService owner)
+    public RocksDBFileDataBucket(String baseDir, String bucketId, RocksDBShardingOnTimeFileStorageService owner)
     {
         if (String.IsNullOrEmpty(baseDir) == false)
         {
@@ -128,36 +127,19 @@ internal class RocksDbInfo
     public bool Using { get; set; }
 }
 
-public enum DBBucketStrategy
-{
-    ByDay,
-    ByMonth,
-    ByYear
-}
-
 /// <summary>
 /// 本地文件存储
 /// </summary>
-public class RocksDBFileStorageService : IFileStorageService, IDisposable
+public class RocksDBShardingOnTimeFileStorageService : IFileStorageService, IDisposable
 {
     public String NextFileId(String fileExtention = "")
     {
-        DateTime now = DateTime.Now;
-        String bucket = GetBucketId(ref now);
-        String id = Guid.NewGuid().ToString("N");
-        if (String.IsNullOrEmpty(fileExtention)) return bucket + id;
-        if (fileExtention.StartsWith('.') == false) fileExtention = '.' + fileExtention;
-        return bucket + id + fileExtention;
+        return BucketStrategy.NextFileId(null, fileExtention);
     }
 
-    private string GetBucketId(ref DateTime now)
+    public String NextFileId(DateTime time, String fileExtention = "")
     {
-        if(BucketStrategy == DBBucketStrategy.ByDay) 
-            return now.Year.ToString() + now.Month.ToString().PadLeft(2, '0') + now.Day.ToString().PadLeft(2, '0');
-        else if(BucketStrategy == DBBucketStrategy.ByMonth)
-            return now.Year.ToString() + now.Month.ToString().PadLeft(2, '0') + "00";
-        else
-            return now.Year.ToString() + "0000";
+        return BucketStrategy.NextFileId(time, fileExtention);
     }
 
     public string BaseDir { get; set; } = LiteDBSetting.DefaultDataDirectory;
@@ -170,9 +152,9 @@ public class RocksDBFileStorageService : IFileStorageService, IDisposable
     private int _maxCacheBuckets = 6;
     private List<RocksDbInfo> _cache = new List<RocksDbInfo>();
 
-    public DBBucketStrategy BucketStrategy { get; private set; }
+    public ShardingOnTimeStrategy BucketStrategy { get; private set; }
 
-    public RocksDBFileStorageService(DBBucketStrategy bucketStrategy = DBBucketStrategy.ByMonth, int maxCacheBuckets = 6)
+    public RocksDBShardingOnTimeFileStorageService(ShardingOnTimeStrategy bucketStrategy = ShardingOnTimeStrategy.ByMonth, int maxCacheBuckets = 6)
     {
         _maxCacheBuckets = Math.Max(1,maxCacheBuckets);
         BucketStrategy = bucketStrategy;
@@ -289,13 +271,38 @@ public class RocksDBFileStorageService : IFileStorageService, IDisposable
         return fileId;
     }
 
-    protected bool SaveInternal(String fileId, Byte[] data)
+    public bool Save(String fileId, Stream stream)
+    {
+        if (String.IsNullOrEmpty(fileId)) throw new ArgumentException(nameof(fileId));
+
+        SaveInternal(fileId, stream);
+        return true;
+    }
+
+    public String Save(Stream stream, String fileExtention)
+    {
+        String fileId = NextFileId(fileExtention);
+        SaveInternal(fileId, stream);
+        return fileId;
+    }
+
+    internal bool SaveInternal(String fileId, Byte[] data)
     {
         if (data == null) return false;
         RocksDBFileDataBucket? bucket = FindBucket(fileId);
         if (bucket == null) throw new ArgumentException("fileId is not valid");
         bucket.Insert(new FileData() { FileId = fileId, Data = data, Length = data.LongLength });
         return true;
+    }
+
+    internal bool SaveInternal(String fileId, Stream stream)
+    {
+        using (MemoryStream memoryStream = new MemoryStream())
+        {
+            stream.CopyTo(memoryStream);
+            var data = memoryStream.ToArray();
+            return SaveInternal(fileId, data);
+        }
     }
 
     public byte[]? Find(String fileId)
@@ -305,6 +312,12 @@ public class RocksDBFileStorageService : IFileStorageService, IDisposable
         if (bucket.Exists() == false) return null;
         var find = bucket.FindOne(fileId);
         return find?.Data ?? null;
+    }
+
+    public Stream? FindStream(String fileId)
+    {
+        var data = Find(fileId);
+        return data == null ? null : new MemoryStream(data);
     }
 
     public void Dispose()

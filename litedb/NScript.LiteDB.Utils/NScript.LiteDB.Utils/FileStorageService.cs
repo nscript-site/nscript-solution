@@ -110,6 +110,31 @@ namespace NScript.LiteDB.Services
             return fileId;
         }
 
+        public bool Save(String fileId, Stream stream)
+        {
+            if (String.IsNullOrEmpty(fileId)) throw new ArgumentException(nameof(fileId));
+
+            SaveInternal(fileId, stream);
+            return true;
+        }
+
+        public String Save(Stream stream, String fileExtention)
+        {
+            String fileId = NextFileId(fileExtention);
+            SaveInternal(fileId, stream);
+            return fileId;
+        }
+
+        protected bool SaveInternal(String fileId, Stream stream)
+        {
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                stream.CopyTo(memoryStream);
+                var data = memoryStream.ToArray();
+                return SaveInternal(fileId, data);
+            }
+        }
+
         protected bool SaveInternal(String fileId, Byte[] data)
         {
             if (data == null) return false;
@@ -126,6 +151,12 @@ namespace NScript.LiteDB.Services
             if (bucket.Exists() == false) return null;
             var find = bucket.FindOne(item => item.FileId == fileId);
             return find?.Data ?? null;
+        }
+
+        public Stream? FindStream(String fileId)
+        {
+            var data = Find(fileId);
+            return data == null ? null : new MemoryStream(data);
         }
     }
 }

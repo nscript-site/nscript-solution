@@ -39,9 +39,27 @@ public interface IFileStorageService
     public bool Save(String fileId, Byte[] data);
 
     /// <summary>
+    /// 保存文件，返回文件 fileId
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="fileExtention"></param>
+    /// <returns></returns>
+    public String Save(Stream stream, String fileExtention);
+
+    /// <summary>
+    /// 保存文件到指定 fileId
+    /// </summary>
+    /// <param name="fileId"></param>
+    /// <param name="stream"></param>
+    /// <returns></returns>
+    public bool Save(String fileId, Stream stream);
+
+    /// <summary>
     /// 根据文件Id查找文件
     /// </summary>
     /// <param name="fileId"></param>
     /// <returns></returns>
     public byte[]? Find(String fileId);
+
+    public Stream? FindStream(String fileId);
 }
