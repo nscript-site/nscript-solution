@@ -1,5 +1,5 @@
-echo stop nspervisor service...
-call nspervisor.exe stop
-call nspervisor.exe uninstall
+echo stop nsupervisor service...
+call nsupervisor.exe stop
+call nsupervisor.exe uninstall
 echo uninstall ok.
 pause
