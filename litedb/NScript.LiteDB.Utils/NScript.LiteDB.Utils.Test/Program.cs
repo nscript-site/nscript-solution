@@ -215,8 +215,8 @@ void TestLocalShardingOnTimeFileStorageService()
 
 //TestFoo();
 //TestShardingOnTimeDataService();
-TestLocalShardingOnTimeFileStorageService();
-//TestTypedDataService();
+//TestLocalShardingOnTimeFileStorageService();
+TestTypedDataService();
 //TestFileStorageService();
 //TestFileStorageService("test_data_litedb");
 //TestRocksDBFileStorageService();

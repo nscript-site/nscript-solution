@@ -1,0 +1,153 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Wbt Guard Service";
+}
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+<div class="text-center">
+    <h1 class="display-4">@Localizer["Daemon List"]</h1>
+    <div id="services">
+        <table class="table table-bordered">
+            @*<caption>NScript.Supervisor 1.0</caption>*@
+            <thead>
+                <tr>
+                    <th>@Localizer["State"]</th>
+                    <th>@Localizer["Desc"]</th>
+                    <th>@Localizer["Application"]</th>
+                    <th>@Localizer["Control"]</th>
+                </tr>
+            </thead>
+            <tbody id="svrlist">
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="log" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="logContent">
+               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>                
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script lang="javascript">
+        var myModal = new bootstrap.Modal(document.getElementById('log'), {
+                keyboard: true
+            })
+        var tt = setInterval(execStatus,1000);
+        function execStatus(){
+            exec(null, 'Status').then(res=>{})
+        }
+
+        async function  exec(processName, command)
+        {
+            await connection.invoke(command, processName);
+            
+        }
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/monitor")
+            .withAutomaticReconnect({
+                nextRetryDelayInMilliseconds: retryContext => {
+                    return Math.random() * 10000;
+                }
+            })
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        async function start() {
+            try {
+                await connection.start();
+                console.log("SignalR Connected.");
+
+                var li = '<tr id="$id"><td class="state">$satte</td><td class="desc">$desc</td><td class="id">$id</td><td class="action">'+
+                    '<a onclick="exec(\'$id\',\'Restart\')" href="javascript:void(0);">@Localizer["Restart"]</a>' +
+                    '<a onclick="exec(\'$id\',\'Start\')" href="javascript:void(0);">@Localizer["Start"]</a>' +
+                    '<a onclick="exec(\'$id\',\'Stop\')" href="javascript:void(0);">@Localizer["Stop"]</a>' +
+                    '<a onclick="exec(\'$id\',\'ClearLogs\')" href="javascript:void(0);">@Localizer["Clear Logs"]</a>' +
+                    '<a onclick="exec(\'$id\',\'LastLogs\')" href="javascript:void(0);">@Localizer["Logs"]</a>' +
+                    '</td></tr>'
+
+                try{
+                    var services  = await connection.invoke("GetServices");
+                    console.log(services);
+                    if(services){
+                        $("#svrlist").html();
+                        for(var i=0;i< services.length;i++){
+                                var s = li.replace(/\$id/g, services[i])
+                                .replace(/\$satte/g, '@Localizer["Unknown"]')
+                                .replace(/\$desc/g, '@Localizer["Unknown"]');
+                                $("#svrlist").append(s)
+                        }
+                    }
+                    await connection.invoke("Status",null);
+                }
+                catch(e){
+                    console.log(e);
+                }
+                            
+            } catch (err) {
+                console.log(err);
+                setTimeout(start, 5000);
+            }
+        };
+
+        connection.on("Status",msg =>{
+            if(msg && msg.command){
+                if(msg.command=='Status'){
+                    var id = msg.processName;
+                    var parent = $(document.getElementById(id));
+                    parent.children('.state').text(msg.status.status);
+                    if(msg.status.pid && msg.status.upTime){
+                        parent.children('.desc').text('[' + msg.status.pid  + '],@Localizer["Uptime:"]' + msg.status.upTime);
+                    }
+                    else if (msg.status.pid) {
+                        parent.children('.desc').text('[' + msg.status.pid + '],@Localizer["Uptime:"]');
+                    }
+                    else{
+                        parent.children('.desc').text('');
+                    }                    
+                }
+                else{
+                    var id = msg.processName;
+                    if(msg.status){
+                        var parent = $(document.getElementById(id));
+                        parent.children('.state').text(msg.status.status);
+                    }
+                }
+            }
+            //console.log('status',msg)
+        });
+        connection.on("LastLogs", msg => {
+            if (msg && msg.command) {
+                if (msg.command == 'LastLogs') {
+                    var id = msg.processName;
+                    $('#staticBackdropLabel').text('@Localizer["App"] ' + id);
+                    $('#logContent').text(msg.content)
+                    myModal.show();
+
+                }
+            }            
+        });
+        connection.onclose(async () => {
+            await start();
+        });
+
+        // Start the connection.
+        start();
+    </script>
+}

@@ -1,0 +1,1 @@
+dotnet publish  -r win-x64 -c Release --self-contained -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -o ../../dist/nsupervior_win
