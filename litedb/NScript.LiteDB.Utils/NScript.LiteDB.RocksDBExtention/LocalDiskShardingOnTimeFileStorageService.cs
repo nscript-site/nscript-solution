@@ -19,9 +19,10 @@ public class LocalDiskShardingOnTimeFileStorageService : IFileStorageService
         return BucketStrategy.NextFileId(time, fileExtention);
     }
 
-    public LocalDiskShardingOnTimeFileStorageService(ShardingOnTimeStrategy bucketStrategy = ShardingOnTimeStrategy.ByMonth)
+    public LocalDiskShardingOnTimeFileStorageService(ShardingOnTimeStrategy bucketStrategy = ShardingOnTimeStrategy.ByMonth, string? baseDir = null)
     {
         BucketStrategy = bucketStrategy;
+        if(baseDir != null) BaseDir = baseDir;
     }
 
     /// <summary>

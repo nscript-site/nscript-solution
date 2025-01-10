@@ -82,43 +82,11 @@ public class OnnxModel : IDisposable
     public static InferenceSession CreateModel(OnnxRuntime runtime, string modelPath, int numThread)
     {
         InferenceSession model = null;
-        SessionOptions op = new SessionOptions();
-
-        var provider = runtime.Provider;
-
-        if (provider == OnnxProvider.DirectML)
-        {
-            op.GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL;
-            op.LogSeverityLevel = OrtLoggingLevel.ORT_LOGGING_LEVEL_ERROR;
-            op.ExecutionMode = ExecutionMode.ORT_SEQUENTIAL;
-            op.EnableMemoryPattern = false;
-            int dmlDeviceId = 0;
-            op.AppendExecutionProvider_DML(dmlDeviceId);
-            Console.WriteLine($"[OnnxRuntime] Use DirectMl Device {dmlDeviceId}, InterOpNumThreads - {op.InterOpNumThreads}, IntraOpNumThreads - {op.IntraOpNumThreads}");
-        }
-        else if (provider == OnnxProvider.OpenVino)
-        {
-            op.LogSeverityLevel = OrtLoggingLevel.ORT_LOGGING_LEVEL_ERROR;
-            String openvinoDevice = "0";
-            op.AppendExecutionProvider_OpenVINO(openvinoDevice);
-            Console.WriteLine($"Use OpenVino Device {openvinoDevice}, InterOpNumThreads - {op.InterOpNumThreads}, IntraOpNumThreads - {op.IntraOpNumThreads}");
-        }
-        else if (provider == OnnxProvider.CoreML)
-        {
-            op.LogSeverityLevel = OrtLoggingLevel.ORT_LOGGING_LEVEL_ERROR;
-            op.AppendExecutionProvider_CoreML(CoreMLFlags.COREML_FLAG_ONLY_ENABLE_DEVICE_WITH_ANE);
-            Console.WriteLine($"Use CoreML Device, InterOpNumThreads - {op.InterOpNumThreads}, IntraOpNumThreads - {op.IntraOpNumThreads}");
-        }
-        else
-        {
-            op.GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL;
-            op.LogSeverityLevel = OrtLoggingLevel.ORT_LOGGING_LEVEL_ERROR;
-        }
 
         var (encrypted, path) = GetFileInfo(modelPath);
         Console.WriteLine("[OnnxRuntime] Load Model: " + path);
 
-        model = new InferenceSession(path, op);
+        model = new InferenceSession(path, runtime.CreateSessionOptions());
         return model;
     }
 

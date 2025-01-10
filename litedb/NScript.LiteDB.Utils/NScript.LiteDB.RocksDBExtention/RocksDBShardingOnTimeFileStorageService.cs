@@ -154,10 +154,11 @@ public class RocksDBShardingOnTimeFileStorageService : IFileStorageService, IDis
 
     public ShardingOnTimeStrategy BucketStrategy { get; private set; }
 
-    public RocksDBShardingOnTimeFileStorageService(ShardingOnTimeStrategy bucketStrategy = ShardingOnTimeStrategy.ByMonth, int maxCacheBuckets = 6)
+    public RocksDBShardingOnTimeFileStorageService(ShardingOnTimeStrategy bucketStrategy = ShardingOnTimeStrategy.ByMonth, int maxCacheBuckets = 6, string? baseDir = null)
     {
         _maxCacheBuckets = Math.Max(1,maxCacheBuckets);
         BucketStrategy = bucketStrategy;
+        if (baseDir != null) BaseDir = baseDir;
     }
 
     private RocksDBFileDataBucket? LastBucket = null;

@@ -22,12 +22,12 @@ public class LocalShardingOnTimeFileStorageService
 
     private int MaxBytesSaveInRocksDB = 16 * 1024 * 1024;
 
-    public LocalShardingOnTimeFileStorageService(ShardingOnTimeStrategy bucketStrategy = ShardingOnTimeStrategy.ByMonth, int maxMBytesSaveInRocksDB = 16, int maxCacheBuckets = 6)
+    public LocalShardingOnTimeFileStorageService(ShardingOnTimeStrategy bucketStrategy = ShardingOnTimeStrategy.ByMonth, int maxMBytesSaveInRocksDB = 16, int maxCacheBuckets = 6, string? baseDir = null)
     {
         BucketStrategy = bucketStrategy;
-        MaxBytesSaveInRocksDB = Math.Max(1, maxMBytesSaveInRocksDB) * 1024 * 1024;
-        rocksDBFileStorageService = new RocksDBShardingOnTimeFileStorageService(bucketStrategy, maxCacheBuckets);
-        localDiskFileStorageService = new LocalDiskShardingOnTimeFileStorageService(bucketStrategy);
+        MaxBytesSaveInRocksDB = Math.Max(0, maxMBytesSaveInRocksDB) * 1024 * 1024;
+        rocksDBFileStorageService = new RocksDBShardingOnTimeFileStorageService(bucketStrategy, maxCacheBuckets,baseDir);
+        localDiskFileStorageService = new LocalDiskShardingOnTimeFileStorageService(bucketStrategy,baseDir);
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ public class LocalShardingOnTimeFileStorageService
     {
         if (fileId == null) return false;
 
-        if (rocksDBFileStorageService.Delete(fileId) == true) return true;
+        if (MaxBytesSaveInRocksDB > 0 && rocksDBFileStorageService.Delete(fileId) == true) return true;
         else return localDiskFileStorageService.Delete(fileId);
     }
 
@@ -88,11 +88,17 @@ public class LocalShardingOnTimeFileStorageService
 
     public byte[]? Find(String fileId)
     {
-        return rocksDBFileStorageService.Find(fileId) ?? localDiskFileStorageService.Find(fileId);
+        if(MaxBytesSaveInRocksDB > 0) 
+            return rocksDBFileStorageService.Find(fileId) ?? localDiskFileStorageService.Find(fileId);
+        else
+            return localDiskFileStorageService.Find(fileId);
     }
 
     public Stream? FindStream(String fileId)
     {
-        return rocksDBFileStorageService.FindStream(fileId) ?? localDiskFileStorageService.FindStream(fileId);
+        if(MaxBytesSaveInRocksDB > 0)
+            return rocksDBFileStorageService.FindStream(fileId) ?? localDiskFileStorageService.FindStream(fileId);
+        else
+            return localDiskFileStorageService.FindStream(fileId);
     }
 }

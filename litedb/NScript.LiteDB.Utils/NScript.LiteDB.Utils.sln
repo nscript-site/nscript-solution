@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NScript.LiteDB.Utils.Test",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NScript.LiteDB.RocksDBExtention", "NScript.LiteDB.RocksDBExtention\NScript.LiteDB.RocksDBExtention.csproj", "{AFDC9316-FAE8-4611-84F7-213DA48A7537}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NScript.LiteDB.Utils.UnitTest", "NScript.LiteDB.Utils.UnitTest\NScript.LiteDB.Utils.UnitTest.csproj", "{FB0FF11E-4B19-4412-A7C3-91B6AA99A477}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test1", "Test1\Test1.csproj", "{D96278B9-DAB1-44A9-832E-D37688156A0F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{AFDC9316-FAE8-4611-84F7-213DA48A7537}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFDC9316-FAE8-4611-84F7-213DA48A7537}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFDC9316-FAE8-4611-84F7-213DA48A7537}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB0FF11E-4B19-4412-A7C3-91B6AA99A477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB0FF11E-4B19-4412-A7C3-91B6AA99A477}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB0FF11E-4B19-4412-A7C3-91B6AA99A477}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB0FF11E-4B19-4412-A7C3-91B6AA99A477}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D96278B9-DAB1-44A9-832E-D37688156A0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D96278B9-DAB1-44A9-832E-D37688156A0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D96278B9-DAB1-44A9-832E-D37688156A0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D96278B9-DAB1-44A9-832E-D37688156A0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
