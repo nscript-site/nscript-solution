@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NScript.Storage", "source\N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NScript.Storage.Test", "source\NScript.Storage.Test\NScript.Storage.Test.csproj", "{E61D124E-C351-4B6A-A5D9-25D95CD44C24}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NScript.Storage.LiteDB", "source\NScript.Storage.LiteDB\NScript.Storage.LiteDB.csproj", "{EA860548-9D1E-4EB2-A545-108A403E86EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NScript.Storage.LiteDB.Test", "source\NScript.Storage.LiteDB.Test\NScript.Storage.LiteDB.Test.csproj", "{917DD9D2-139E-4517-8399-585D70681BA7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{E61D124E-C351-4B6A-A5D9-25D95CD44C24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E61D124E-C351-4B6A-A5D9-25D95CD44C24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E61D124E-C351-4B6A-A5D9-25D95CD44C24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA860548-9D1E-4EB2-A545-108A403E86EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA860548-9D1E-4EB2-A545-108A403E86EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA860548-9D1E-4EB2-A545-108A403E86EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA860548-9D1E-4EB2-A545-108A403E86EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{917DD9D2-139E-4517-8399-585D70681BA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{917DD9D2-139E-4517-8399-585D70681BA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{917DD9D2-139E-4517-8399-585D70681BA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{917DD9D2-139E-4517-8399-585D70681BA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
