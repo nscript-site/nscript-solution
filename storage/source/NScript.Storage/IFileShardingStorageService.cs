@@ -114,7 +114,7 @@ public class LocalDiskShardingFileStorageService : IFileShardingStorageService
     {
         if (fileId == null || fileId.Length < 10) return null;
         String bucketId = fileId.Substring(0, 8);
-        return new DirectoryInfo(Path.Combine(BaseDir, "large_files", bucketId));
+        return new DirectoryInfo(Path.Combine(BaseDir, "files", bucketId));
     }
 
     public bool Save(String fileId, Byte[] data)
