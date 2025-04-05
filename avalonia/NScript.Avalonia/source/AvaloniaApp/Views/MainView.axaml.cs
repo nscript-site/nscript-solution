@@ -14,4 +14,10 @@ public partial class MainView : UserControl
         var window = new TemplateSelectorWindow();
         window.Show();
     }
+
+    private void Button_NWindow_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var window = new NWindowDemoWindow();
+        window.Show();
+    }
 }

@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using NScript.Avalonia;
+using Avalonia.NScript;
 using System;
 using System.Collections.Generic;
 using System.Linq;

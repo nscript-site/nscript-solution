@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NScript.Avalonia", "source\NScript.Avalonia\NScript.Avalonia.csproj", "{738C98B2-CC77-4778-8158-3C773FBAA4DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia.NScript", "source\NScript.Avalonia\Avalonia.NScript.csproj", "{738C98B2-CC77-4778-8158-3C773FBAA4DC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaApp", "source\AvaloniaApp\AvaloniaApp.csproj", "{58B329EF-709F-891C-DDF3-D62E6DB6DA5D}"
 EndProject

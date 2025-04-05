@@ -21,6 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NScript.Avalonia\NScript.Avalonia.csproj" />
+    <ProjectReference Include="..\NScript.Avalonia\Avalonia.NScript.csproj" />
   </ItemGroup>
 </Project>

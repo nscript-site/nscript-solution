@@ -13,5 +13,6 @@
   </Design.DataContext>
   <StackPanel Margin="20" Spacing="20">
     <Button Click="Button_BaseTemplateSelector_Click">BaseTemplateSelector</Button>
+    <Button Click="Button_NWindow_Click">NWindow</Button>
   </StackPanel>
 </UserControl>

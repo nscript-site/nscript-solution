@@ -2,7 +2,7 @@
 using Avalonia.Controls.Templates;
 using Avalonia.Metadata;
 
-namespace NScript.Avalonia;
+namespace Avalonia.NScript;
 
 public class BaseTemplateSelector : IDataTemplate
 {
