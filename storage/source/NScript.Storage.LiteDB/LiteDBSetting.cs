@@ -8,7 +8,7 @@ namespace NScript.Storage.LiteDB;
 
 public class LiteDBSetting
 {
-    public static String DefaultStorageDirectory { get; set; } = "./nstorage_litedb";
+    public static String DefaultStorageDirectory { get; set; } = "./nstorage";
 
     public string DataDirectory { get; set; }
 

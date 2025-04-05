@@ -1,19 +1,17 @@
 ﻿using RocksDbSharp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace NScript.Storage;
 
 /// <summary>
-/// 文件分片存储服务
+/// 文件存储服务
 /// </summary>
-public interface IFileShardingStorageService
+public interface IFileStorageService
 {
-    /// <summary>
-    /// 生成下一个文件的 Id。文件名称为 8字符日期+UUID+扩展名
-    /// </summary>
-    /// <param name="fileExtention"></param>
-    /// <returns></returns>
-    public string NextFileId(String fileExtention = "");
-
     /// <summary>
     /// 删除文件
     /// </summary>
@@ -63,26 +61,18 @@ public interface IFileShardingStorageService
     public Stream? FindStream(String fileId);
 }
 
-public class LocalDiskShardingFileStorageService : IFileShardingStorageService
+public class LocalDiskFileStorageService : IFileStorageService
 {
     public string BaseDir { get; set; } = StorageSetting.DefaultStorageDirectory;
 
-    public ShardingStrategy BucketStrategy { get; private set; }
+    public LocalDiskFileStorageService(string? baseDir = null)
+    {
+        if (baseDir != null) BaseDir = baseDir;
+    }
 
     public String NextFileId(String fileExtention = "")
     {
-        return BucketStrategy.NextFileId(null, fileExtention);
-    }
-
-    public String NextFileId(DateTime time, String fileExtention = "")
-    {
-        return BucketStrategy.NextFileId(time, fileExtention);
-    }
-
-    public LocalDiskShardingFileStorageService(ShardingStrategy bucketStrategy = ShardingStrategy.ByMonth, string? baseDir = null)
-    {
-        BucketStrategy = bucketStrategy;
-        if (baseDir != null) BaseDir = baseDir;
+        return Guid.NewGuid().ToString("N") + fileExtention ?? String.Empty;
     }
 
     /// <summary>
@@ -204,16 +194,11 @@ public class LocalDiskShardingFileStorageService : IFileShardingStorageService
 /// <summary>
 /// 本地RocksDB文件存储
 /// </summary>
-public class RocksDBShardingFileStorageService : AbstractRocksDBService, IFileShardingStorageService, IDisposable
+public class RocksDBFileStorageService : AbstractRocksDBService, IFileStorageService, IDisposable
 {
     public String NextFileId(String fileExtention = "")
     {
-        return BucketStrategy.NextFileId(null, fileExtention);
-    }
-
-    public String NextFileId(DateTime time, String fileExtention = "")
-    {
-        return BucketStrategy.NextFileId(time, fileExtention);
+        return Guid.NewGuid().ToString("N") + fileExtention ?? String.Empty;
     }
 
     public string BaseDir { get; set; } = StorageSetting.DefaultStorageDirectory;
@@ -223,50 +208,31 @@ public class RocksDBShardingFileStorageService : AbstractRocksDBService, IFileSh
     /// </summary>
     public DbOptions Options { get; set; } = new DbOptions().SetCreateIfMissing(true);
 
-    private int _maxCacheBuckets = 6;
-    private List<RocksDbInfo> _cache = new List<RocksDbInfo>();
+    private RocksDbInfo? _cache;
 
-    public ShardingStrategy BucketStrategy { get; private set; }
+    private RocksDBFileDataBucket? bucket;
 
-    public RocksDBShardingFileStorageService(ShardingStrategy bucketStrategy = ShardingStrategy.ByMonth, int maxCacheBuckets = 6, string? baseDir = null)
+    public RocksDBFileStorageService(string? baseDir = null)
     {
-        _maxCacheBuckets = Math.Max(1, maxCacheBuckets);
-        BucketStrategy = bucketStrategy;
         if (baseDir != null) BaseDir = baseDir;
     }
-
-    private RocksDBFileDataBucket? LastBucket = null;
 
     protected override RocksDbInfo GetOrCreateDb(string dbPath)
     {
         RocksDbInfo? db = null;
-        lock (_cache)
+
+        if (_cache != null) return _cache;
+
+        lock (this)
         {
-            db = _cache.FirstOrDefault(x => x.DBPath == dbPath);
-            if (db == null)
+            if (_cache == null)
             {
                 var option = Options ?? new DbOptions().SetCreateIfMissing(true);
-                db = new RocksDbInfo() { DBPath = dbPath, DataBase = RocksDb.Open(option, dbPath) };
-                _cache.Add(db);
-            }
-
-            if (_cache.Count > _maxCacheBuckets)
-            {
-                // 移除旧的
-                try
-                {
-                    var rdb = _cache[0];
-                    rdb?.DataBase?.Dispose();
-                    _cache.RemoveAt(0);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
+                _cache = new RocksDbInfo() { DBPath = dbPath, DataBase = RocksDb.Open(option, dbPath) };
             }
         }
 
-        return db!;
+        return _cache;
     }
 
     /// <summary>
@@ -286,26 +252,25 @@ public class RocksDBShardingFileStorageService : AbstractRocksDBService, IFileSh
     public bool IsValid(String fileId)
     {
         if (fileId == null || fileId.Length < 10) return false;
-        for (int i = 0; i < 8; i++)
-        {
-            if (Char.IsNumber(fileId[i]) == false) return false;
-        }
         return true;
     }
 
     internal RocksDBFileDataBucket? FindBucket(String fileId, bool creatIfNotExist = true)
     {
         if (IsValid(fileId) == false) return null;
-        String bucketId = fileId.Substring(0, 8);
 
-        if (LastBucket?.BucketId == bucketId)  // 最近的 bucket 极大可能是所需要的 bucket
-            return LastBucket;
+        if (bucket != null) return bucket;
 
+        var bucketId = String.Empty;
         if (creatIfNotExist == false && RocksDBFileDataBucket.IsBucketExists(BaseDir, bucketId) == false)
             return null;
 
-        var bucket = new RocksDBFileDataBucket(BaseDir, bucketId, this);
-        LastBucket = bucket;
+        lock(this)
+        {
+            if(bucket == null)
+                bucket = new RocksDBFileDataBucket(BaseDir, bucketId, this);
+        }
+
         return bucket;
     }
 
@@ -375,45 +340,30 @@ public class RocksDBShardingFileStorageService : AbstractRocksDBService, IFileSh
 
     public void Dispose()
     {
-        lock (_cache)
-        {
-            foreach (var item in _cache)
-            {
-                item?.DataBase?.Dispose();
-            }
-            _cache.Clear();
-        }
+        _cache = null;
     }
 }
 
 /// <summary>
-/// 本地文件分片存储系统。对于小文件，存储在 rocksdb 中，大文件，存储在本地文件系统里面。均按照日期分片存储。
+/// 本地文件存储系统。对于小文件，存储在 rocksdb 中，大文件，存储在本地文件系统里面。均按照日期分片存储。
 /// </summary>
-public class LocalShardingFileStorageService
+public class LocalFileStorageService
 {
-    private RocksDBShardingFileStorageService rocksDBFileStorageService;
-    private LocalDiskShardingFileStorageService localDiskFileStorageService;
-
-    public ShardingStrategy BucketStrategy { get; private set; }
+    private RocksDBFileStorageService rocksDBFileStorageService;
+    private LocalDiskFileStorageService localDiskFileStorageService;
 
     public String NextFileId(String fileExtention = "")
     {
-        return BucketStrategy.NextFileId(null, fileExtention);
-    }
-
-    public String NextFileId(DateTime time, String fileExtention = "")
-    {
-        return BucketStrategy.NextFileId(time, fileExtention);
+        return Guid.NewGuid().ToString("N") + fileExtention ?? String.Empty;
     }
 
     private int MaxBytesSaveInRocksDB = 16 * 1024 * 1024;
 
-    public LocalShardingFileStorageService(ShardingStrategy bucketStrategy = ShardingStrategy.ByMonth, int maxMBytesSaveInRocksDB = 16, int maxCacheBuckets = 6, string? baseDir = null)
+    public LocalFileStorageService(int maxMBytesSaveInRocksDB = 16, string? baseDir = null)
     {
-        BucketStrategy = bucketStrategy;
         MaxBytesSaveInRocksDB = Math.Max(0, maxMBytesSaveInRocksDB) * 1024 * 1024;
-        rocksDBFileStorageService = new RocksDBShardingFileStorageService(bucketStrategy, maxCacheBuckets, baseDir);
-        localDiskFileStorageService = new LocalDiskShardingFileStorageService(bucketStrategy, baseDir);
+        rocksDBFileStorageService = new RocksDBFileStorageService(baseDir);
+        localDiskFileStorageService = new LocalDiskFileStorageService(baseDir);
     }
 
     /// <summary>
