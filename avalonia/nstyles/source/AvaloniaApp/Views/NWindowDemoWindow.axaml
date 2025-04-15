@@ -1,0 +1,126 @@
+<ns:NWindow x:Class="AvaloniaApp.Views.NWindowDemoWindow"
+            xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:ns="nstyles"
+        Title="NWindowDemoWindow">
+  <StackPanel Margin="10" Spacing="10">
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <Button Click="Button_ToggleBaseTheme_Click" Classes="Flat">切换基础主题（白天/黑夜）</Button>
+      <Button Click="Button_ToggleColorTheme_Click" Classes="Flat">切换颜色主题</Button>
+    </StackPanel>
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <Button Classes="Basic">Basic 按钮</Button>
+      <Button Classes="Flat">Flat 按钮</Button>
+      <Button Classes="Accent">Accent 按钮</Button>
+      <Button Classes="Outlined">Outlined 按钮</Button>
+      <Button Classes="Rounded">Rounded 按钮</Button>
+      <Button Classes="Rounded Flat">Rounded+Flat 按钮</Button>
+      <Button Classes="Success">Success 按钮</Button>
+      <Button Classes="Danger">Danger 按钮</Button>
+    </StackPanel>
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <Button Classes="Icon">
+        <PathIcon Data="{x:Static ns:Icons.Search}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.FileOpen}" Foreground="{Binding $parent.Foreground}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.Check}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.Cross}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.Calendar}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.Plus}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.Minus}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.Error}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.Login}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.ChevronUp}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.ChevronDown}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.ChevronLeft}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.ChevronRight}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.CircleCheck}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.CircleWarning}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.CircleInformation}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.CircleClose}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.CircleOutline}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.CircleOutlineClose}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.CircleOutlinePlus}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.CircleOutlineMinus}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.CircleOutlineCheck}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.KeyboardCaps}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.BackspaceOutline}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.ArrowLeft}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.ArrowRight}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.Menu}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.Star}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.InformationOutline}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Icon Outlined">
+        <PathIcon Data="{x:Static ns:Icons.AlertOutline}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+    </StackPanel>
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <PathIcon Data="{x:Static ns:Icons.Search}" />
+      <PathIcon Data="{x:Static ns:Icons.Plus}" />
+      <PathIcon Data="{x:Static ns:Icons.Star}" Foreground="Red"/>
+    </StackPanel>
+    <StackPanel Orientation="Horizontal" Spacing="10">
+      <ns:Loading></ns:Loading>
+    </StackPanel>
+    <TextBlock>这是一行文本</TextBlock>
+  </StackPanel>
+</ns:NWindow>
