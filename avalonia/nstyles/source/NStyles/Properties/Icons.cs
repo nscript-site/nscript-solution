@@ -56,6 +56,7 @@ public static class Icons
     public static StreamGeometry Star { get; } = GetIcon(nameof(Star), IconsResources.Star);
     public static StreamGeometry InformationOutline { get; } = GetIcon(nameof(InformationOutline), IconsResources.InformationOutline);
     public static StreamGeometry AlertOutline { get; } = GetIcon(nameof(AlertOutline), IconsResources.AlertOutline);
+    public static StreamGeometry RotateRight { get; } = GetIcon(nameof(RotateRight), IconsResources.RotateRight);
 
     public static StreamGeometry GetIcon(string name, string svg)
     {
@@ -67,6 +68,18 @@ public static class Icons
         icon = StreamGeometry.Parse(svg);
         IconsResources._iconCache.AddOrUpdate(name, icon, (key, oldValue) => icon);
         return icon;
+    }
+}
+
+public class SearchIcon
+{
+    private static readonly Lazy<SearchIcon> _instance = new(() => new SearchIcon());
+    public static StreamGeometry Instance => _instance.Value.g;
+
+    private StreamGeometry g;
+    private SearchIcon()
+    {
+        g = StreamGeometry.Parse("M11.5,2.75 C16.3324916,2.75 20.25,6.66750844 20.25,11.5 C20.25,13.6461673 19.4773285,15.6118676 18.1949905,17.1340957 L25.0303301,23.9696699 C25.3232233,24.2625631 25.3232233,24.7374369 25.0303301,25.0303301 C24.7640635,25.2965966 24.3473998,25.3208027 24.0537883,25.1029482 L23.9696699,25.0303301 L17.1340957,18.1949905 C15.6118676,19.4773285 13.6461673,20.25 11.5,20.25 C6.66750844,20.25 2.75,16.3324916 2.75,11.5 C2.75,6.66750844 6.66750844,2.75 11.5,2.75 Z M11.5,4.25 C7.49593556,4.25 4.25,7.49593556 4.25,11.5 C4.25,15.5040644 7.49593556,18.75 11.5,18.75 C15.5040644,18.75 18.75,15.5040644 18.75,11.5 C18.75,7.49593556 15.5040644,4.25 11.5,4.25 Z");
     }
 }
 
@@ -141,4 +154,6 @@ internal static class IconsResources
     internal const string InformationOutline = "M11 9H13V7H11V9M11 17H13V11H11V17Z";
 
     internal const string AlertOutline = "M 11,4L 13,4L 13,15L 11,15L 11,4 Z M 13,18L 13,20L 11,20L 11,18L 13,18 Z";
+
+    internal const string RotateRight = "M16.89,15.5L18.31,16.89C19.21,15.73 19.76,14.39 19.93,13H17.91C17.77,13.87 17.43,14.72 16.89,15.5M13,17.9V19.92C14.39,19.75 15.74,19.21 16.9,18.31L15.46,16.87C14.71,17.41 13.87,17.76 13,17.9M19.93,11C19.76,9.61 19.21,8.27 18.31,7.11L16.89,8.53C17.43,9.28 17.77,10.13 17.91,11M15.55,5.55L11,1V4.07C7.06,4.56 4,7.92 4,12C4,16.08 7.05,19.44 11,19.93V17.91C8.16,17.43 6,14.97 6,12C6,9.03 8.16,6.57 11,6.09V10L15.55,5.55Z";
 }
