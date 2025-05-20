@@ -88,6 +88,13 @@ public class Loading : Control
         }
         else if (change.Property == LoadingStyleProperty)
             _customVisual?.SendHandlerMessage(Effects[LoadingStyle]);
+        else if(change.Property == IsVisibleProperty)
+        {
+            if (IsVisible)
+                _customVisual?.SendHandlerMessage(EffectDrawBase.StartAnimations);
+            else
+                _customVisual?.SendHandlerMessage(EffectDrawBase.StopAnimations);
+        }
     }
 
     public class LoadingEffectDraw : EffectDrawBase

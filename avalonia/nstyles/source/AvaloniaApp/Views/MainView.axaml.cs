@@ -20,4 +20,12 @@ public partial class MainView : UserControl
         var window = new NWindowDemoWindow();
         window.Show();
     }
+
+    private void StackPanel_PointerEntered(object? sender, Avalonia.Input.PointerEventArgs e)
+    {
+    }
+
+    private void StackPanel_PointerExited_1(object? sender, Avalonia.Input.PointerEventArgs e)
+    {
+    }
 }

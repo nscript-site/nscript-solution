@@ -61,7 +61,7 @@ public partial class NTheme : Styles
 
     /// <summary>
     /// Currently active <see cref="ThemeVariant"/>
-    /// If you want to change this please use <see cref="ChangeBaseTheme"/> or <see cref="SwitchBaseTheme"/>
+    /// If you want to change this please use <see cref="BaseTheme"/> or <see cref="SwitchBaseTheme"/>
     /// </summary>
     public ThemeVariant ActiveBaseTheme => _app.ActualThemeVariant;
 
@@ -70,7 +70,10 @@ public partial class NTheme : Styles
     private readonly HashSet<SukiColorTheme> _colorThemeHashset = new();
     private readonly AvaloniaList<SukiColorTheme> _allThemes = new();
 
-    public NTheme()
+    public NTheme() : this(SukiColor.Blue,null)
+    { }
+
+    public NTheme(SukiColor colorTheme, IEnumerable<SukiColorTheme>? extraColorThemes)
     {
         AvaloniaXamlLoader.Load(this);
         _app = Application.Current!;
@@ -79,9 +82,10 @@ public partial class NTheme : Styles
         foreach (var theme in DefaultColorThemes)
             AddColorTheme(theme.Value);
 
-        ChangeColorTheme(SukiColor.Blue);
+        if(extraColorThemes != null)
+            AddColorThemes(extraColorThemes);
 
-        //SwitchColorTheme();
+        ColorTheme(colorTheme);
 
         UpdateFlowDirectionResources(IsRightToLeft);
     }
@@ -100,15 +104,22 @@ public partial class NTheme : Styles
     /// Change the theme to one of the default themes.
     /// </summary>
     /// <param name="sukiColor">The <see cref="SukiColor"/> to change to.</param>
-    public void ChangeColorTheme(SukiColor sukiColor) =>
+    public NTheme ColorTheme(SukiColor sukiColor)
+    {
         ThemeColor = sukiColor;
+        return this;
+    }
 
     /// <summary>
     /// Tries to change the theme to a specific theme, this can be either a default or a custom defined one.
     /// </summary>
     /// <param name="sukiColorTheme"></param>
-    public void ChangeColorTheme(SukiColorTheme sukiColorTheme) =>
+    public NTheme ColorTheme(SukiColorTheme sukiColorTheme)
+    {
         SetColorTheme(sukiColorTheme);
+        return this;
+    }
+        
 
     /// <summary>
     /// Blindly switches to the "next" theme available in the <see cref="ColorThemes"/> collection.
@@ -125,51 +136,55 @@ public partial class NTheme : Styles
         if (index == -1) return;
         var newIndex = (index + 1) % ColorThemes.Count;
         var newColorTheme = ColorThemes[newIndex];
-        ChangeColorTheme(newColorTheme);
+        ColorTheme(newColorTheme);
     }
 
     /// <summary>
     /// Add a new <see cref="SukiColorTheme"/> to the ones available, without making it active.
     /// </summary>
     /// <param name="sukiColorTheme">New <see cref="SukiColorTheme"/> to add.</param>
-    public void AddColorTheme(SukiColorTheme sukiColorTheme)
+    public NTheme AddColorTheme(SukiColorTheme sukiColorTheme)
     {
         if (_colorThemeHashset.Contains(sukiColorTheme))
             throw new InvalidOperationException("This color theme has already been added.");
         _colorThemeHashset.Add(sukiColorTheme);
         _allThemes.Add(sukiColorTheme);
+        return this;
     }
 
     /// <summary>
     /// Adds multiple new <see cref="SukiColorTheme"/> to the ones available, without making any active.
     /// </summary>
     /// <param name="sukiColorThemes">A collection of new <see cref="SukiColorTheme"/> to add.</param>
-    public void AddColorThemes(IEnumerable<SukiColorTheme> sukiColorThemes)
+    public NTheme AddColorThemes(IEnumerable<SukiColorTheme> sukiColorThemes)
     {
         foreach (var colorTheme in sukiColorThemes)
             AddColorTheme(colorTheme);
+        return this;
     }
 
     /// <summary>
     /// Tries to change the base theme to the one provided, if it is different.
     /// </summary>
     /// <param name="baseTheme"><see cref="ThemeVariant"/> to change to.</param>
-    public void ChangeBaseTheme(ThemeVariant baseTheme)
+    public NTheme BaseTheme(ThemeVariant baseTheme)
     {
-        if (_app.ActualThemeVariant == baseTheme) return;
+        if (_app.ActualThemeVariant == baseTheme) return this;
         _app.RequestedThemeVariant = baseTheme;
+        return this;
     }
 
     /// <summary>
     /// Simply switches from Light -> Dark and visa versa.
     /// </summary>
-    public void SwitchBaseTheme()
+    public NTheme SwitchBaseTheme()
     {
-        if (Application.Current is null) return;
+        if (Application.Current is null) return this;
         var newBase = Application.Current.ActualThemeVariant == ThemeVariant.Dark
             ? ThemeVariant.Light
             : ThemeVariant.Dark;
         Application.Current.RequestedThemeVariant = newBase;
+        return this;
     }
 
     private void UpdateFlowDirectionResources(bool rightToLeft)

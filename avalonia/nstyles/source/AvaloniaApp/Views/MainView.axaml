@@ -11,7 +11,7 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <vm:MainViewModel />
   </Design.DataContext>
-  <StackPanel Margin="20" Spacing="20">
+  <StackPanel Margin="20" Spacing="20" PointerEntered="StackPanel_PointerEntered" PointerExited="StackPanel_PointerExited_1">
     <Button Click="Button_BaseTemplateSelector_Click">BaseTemplateSelector</Button>
     <Button Click="Button_NWindow_Click">NWindow</Button>
   </StackPanel>

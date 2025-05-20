@@ -1,6 +1,5 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:icons="clr-namespace:NStyles.Properties"
                     xmlns:nc="https://github.com/nscript-site">
   <ControlTheme x:Key="SukiButtonStyle" TargetType="Button">
     <Setter Property="BorderThickness" Value="1.2" />

@@ -57,13 +57,16 @@
                                 <Setter Property="Width" Value="10" />
                               </Style>
                             </StackPanel.Styles>
-                            <ItemsControl ItemsSource="{TemplateBinding RightWindowTitleBarControls}">
+                            <ContentPresenter HorizontalAlignment="Right"
+                                              Content="{TemplateBinding RightWindowTitleBarControls}"
+                                              />
+                            <!--<ItemsControl ItemsSource="{TemplateBinding RightWindowTitleBarControls}">
                               <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                   <StackPanel FlowDirection="{DynamicResource FlowDirectionOpposite}" Orientation="Horizontal" />
                                 </ItemsPanelTemplate>
                               </ItemsControl.ItemsPanel>
-                            </ItemsControl>
+                            </ItemsControl>-->
                             <Button Name="PART_MinimizeButton"
                                     VerticalContentAlignment="Bottom"
                                     Classes="Basic WindowControlsButton"
@@ -93,6 +96,9 @@
                                        FontWeight="{TemplateBinding TitleFontWeight}"
                                        IsHitTestVisible="False"
                                        Text="{TemplateBinding Title}" />
+                            <ContentPresenter HorizontalAlignment="Left"
+                                              Content="{TemplateBinding SubTitleContent}"
+                                              IsHitTestVisible="False" />
                           </StackPanel>
                         </DockPanel>
                       </Panel>

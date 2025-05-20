@@ -50,6 +50,15 @@ public class NWindow : Window
         set => SetValue(LogoContentProperty, value);
     }
 
+    public static readonly StyledProperty<Control?> SubTitleContentProperty =
+    AvaloniaProperty.Register<NWindow, Control?>(nameof(SubTitleContent));
+
+    public Control? SubTitleContent
+    {
+        get => GetValue(SubTitleContentProperty);
+        set => SetValue(SubTitleContentProperty, value);
+    }
+
     public static readonly StyledProperty<bool> ShowBottomBorderProperty =
         AvaloniaProperty.Register<NWindow, bool>(nameof(ShowBottomBorder), defaultValue: true);
 
@@ -191,9 +200,9 @@ public class NWindow : Window
     //    set => SetValue(BackgroundTransitionTimeProperty, value);
     //}
 
-    public static readonly StyledProperty<Avalonia.Controls.Controls> RightWindowTitleBarControlsProperty =
-        AvaloniaProperty.Register<NWindow, Avalonia.Controls.Controls>(nameof(RightWindowTitleBarControls),
-            defaultValue: new Avalonia.Controls.Controls());
+    public static readonly StyledProperty<Avalonia.Controls.Control> RightWindowTitleBarControlsProperty =
+        AvaloniaProperty.Register<NWindow, Avalonia.Controls.Control>(nameof(RightWindowTitleBarControls),
+            defaultValue: new Avalonia.Controls.Control());
 
     public static readonly StyledProperty<bool> BackgroundForceSoftwareRenderingProperty =
         AvaloniaProperty.Register<NWindow, bool>(nameof(BackgroundForceSoftwareRendering));
@@ -212,7 +221,7 @@ public class NWindow : Window
     /// Controls that are displayed on the right side of the title bar,
     /// to the left of the normal window control buttons. (Displays provided controls right-to-left)
     /// </summary>
-    public Avalonia.Controls.Controls RightWindowTitleBarControls
+    public Avalonia.Controls.Control RightWindowTitleBarControls
     {
         get => GetValue(RightWindowTitleBarControlsProperty);
         set => SetValue(RightWindowTitleBarControlsProperty, value);
@@ -235,7 +244,7 @@ public class NWindow : Window
     public NWindow()
     {
         MenuItems = new AvaloniaList<MenuItem>();
-        RightWindowTitleBarControls = new Avalonia.Controls.Controls();
+        RightWindowTitleBarControls = new Avalonia.Controls.Control();
         Hosts = new Avalonia.Controls.Controls();
     }
 
@@ -355,9 +364,15 @@ public class NWindow : Window
         if (state == WindowState.FullScreen)
             CanMaximize = CanResize = CanMove = false;
         if (state == WindowState.Maximized)
+        {
             Margin = new Thickness(7);
+            CanMaximize = CanResize = CanMove = true;
+        }
         else
+        {
             Margin = new Thickness(0);
+            CanMaximize = CanResize = CanMove = true;
+        }
     }
 
     private void OnTitleBarPointerPressed(object? sender, PointerPressedEventArgs e)

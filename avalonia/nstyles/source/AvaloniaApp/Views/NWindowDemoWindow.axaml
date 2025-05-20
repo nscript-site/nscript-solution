@@ -5,7 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         xmlns:ns="nstyles"
+        Icon="/Assets/avalonia-logo.ico"
         Title="NWindowDemoWindow">
+  <ns:NWindow.RightWindowTitleBarControls>
+    <StackPanel Orientation="Horizontal">
+      <Button Classes="Basic WindowControlsButton">
+        <PathIcon Data="{x:Static ns:Icons.Search}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+      <Button Classes="Basic WindowControlsButton">
+        <PathIcon Data="{x:Static ns:Icons.FileOpen}" Foreground="{Binding $parent.Foreground}"/>
+      </Button>
+      <Button Classes="Basic WindowControlsButton">
+        <PathIcon Data="{x:Static ns:Icons.Check}" Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType=Button}}"/>
+      </Button>
+    </StackPanel>
+  </ns:NWindow.RightWindowTitleBarControls>
   <StackPanel Margin="10" Spacing="10">
     <StackPanel Orientation="Horizontal" Spacing="10">
       <Button Click="Button_ToggleBaseTheme_Click" Classes="Flat">切换基础主题（白天/黑夜）</Button>
@@ -125,8 +139,17 @@
       <PathIcon Data="{x:Static ns:Icons.Star}" Foreground="Red"/>
     </StackPanel>
     <StackPanel Orientation="Horizontal" Spacing="10">
-      <ns:Loading></ns:Loading>
+      <ns:Loading x:Name="loading"></ns:Loading>
+      <Button Click="Button_Click_Loading">显示/隐藏</Button>
     </StackPanel>
     <TextBlock>这是一行文本</TextBlock>
+    <RadioButton Content="RadioButton 1" GroupName="Group1" />
+    <ToggleSwitch Classes="Switch"></ToggleSwitch>
+    <Grid Width="200" Height="200" Background="Red" 
+          PointerEntered="Grid_PointerEntered" 
+          PointerExited="Grid_PointerExited_1"
+          PointerMoved="Grid_PointerMoved_2">
+      
+    </Grid>
   </StackPanel>
 </ns:NWindow>
