@@ -27,6 +27,10 @@
         <ResourceInclude Source="avares://NStyles/Theme/Button.axaml" />
         <ResourceInclude Source="avares://NStyles/Theme/PathIcon.axaml" />
         <ResourceInclude Source="avares://NStyles/Controls/GlassCard.axaml" />
+        <ResourceInclude Source="avares://NStyles/Controls/InfoBadge.axaml" />
+        <ResourceInclude Source="avares://NStyles/Controls/InfoBar.axaml" />
+        <ResourceInclude Source="avares://NStyles/Theme/ContextMenu.axaml" />
+        <ResourceInclude Source="avares://NStyles/Theme/MenuItem.axaml" />
       </ResourceDictionary.MergedDictionaries>
 
     </ResourceDictionary>
