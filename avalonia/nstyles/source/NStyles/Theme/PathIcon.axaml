@@ -24,6 +24,9 @@
         <Style Selector="^.Primary">
             <Setter Property="Foreground" Value="{DynamicResource SukiPrimaryColor}" />
         </Style>
+        <Style Selector="^.Danger">
+            <Setter Property="Foreground" Value="#831313" />
+        </Style>
         <Style Selector="^.Accent">
             <Setter Property="Foreground" Value="{DynamicResource SukiAccentColor}" />
         </Style>

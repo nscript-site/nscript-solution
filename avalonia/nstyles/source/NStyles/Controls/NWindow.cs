@@ -362,16 +362,16 @@ public class NWindow : Window
     private void OnWindowStateChanged(WindowState state)
     {
         if (state == WindowState.FullScreen)
-            CanMaximize = CanResize = CanMove = false;
+            CanResize = CanMove = false;
         if (state == WindowState.Maximized)
         {
             Margin = new Thickness(7);
-            CanMaximize = CanResize = CanMove = true;
+            CanResize = CanMove = true;
         }
         else
         {
             Margin = new Thickness(0);
-            CanMaximize = CanResize = CanMove = true;
+            CanResize = CanMove = true;
         }
     }
 

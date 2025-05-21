@@ -171,6 +171,7 @@
             <PathIcon Data="{x:Static ns:Icons.Search}" />
             <PathIcon Data="{x:Static ns:Icons.Plus}" />
             <PathIcon Data="{x:Static ns:Icons.Star}" Foreground="Red"/>
+            <PathIcon Data="{x:Static ns:Icons.Star}" Classes="Danger" />
           </StackPanel>
         </ns:GroupBox>
       </ns:GlassCard>
