@@ -198,6 +198,12 @@
       </ns:GlassCard>
 
       <ns:GlassCard>
+        <ns:GroupBox Header="CheckBox">
+          <CheckBox Content="CheckBox 1" />
+        </ns:GroupBox>
+      </ns:GlassCard>
+
+      <ns:GlassCard>
         <ns:GroupBox Header="ToggleSwitch">
           <ToggleSwitch Classes="Switch"></ToggleSwitch>
         </ns:GroupBox>

@@ -6,7 +6,7 @@
   <StyleInclude Source="avares://NStyles/Theme/RadioButtonStyles.axaml" />
   <StyleInclude Source="avares://NStyles/Theme/ToggleButtonStyles.axaml" />
   <StyleInclude Source="avares://NStyles/Theme/ToggleSwitchStyles.axaml" />
-  <!--<StyleInclude Source="avares://NStyles/Theme/TabControlStyles.axaml" />-->
+  <StyleInclude Source="avares://NStyles/Theme/CheckBoxStyles.axaml" />
   <Styles.Resources>
     <ResourceDictionary>
 
