@@ -23,4 +23,8 @@
     <PackageReference Include="nstyles" Version="9.0.1.14" />
     <PackageReference Include="NStyles.MeterialIcons" Version="9.0.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\nui\Nui\Nui.csproj" />
+  </ItemGroup>
 </Project>

@@ -1,9 +1,10 @@
 ﻿using Avalonia.Input;
+using Avalonia.Markup.Declarative;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Threading;
 using System.Windows.Input;
 
-namespace AvaloniaDemo;
+namespace Nui;
 
 public abstract class BaseView : MvuView
 {
@@ -122,7 +123,7 @@ public abstract class BaseView : MvuView
     //    return iconView;
     //}
 
-    public static DynamicResourceExtension DynamicResource(string key)
+    public static DynamicResourceExtension R(string key)
     {
         return new DynamicResourceExtension(key);
     }

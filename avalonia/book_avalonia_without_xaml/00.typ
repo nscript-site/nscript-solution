@@ -50,7 +50,9 @@
 
 \
 
-不用 xaml 开发 Avalonia 应用
+Avalonia without xaml
+
+(不用 xaml 开发 Avalonia 应用)
 
 \
 

@@ -1,6 +1,6 @@
 ﻿using NStyles.Controls;
 
-namespace AvaloniaDemo;
+namespace Nui;
 
 /// <summary>
 /// 基本的窗体类别
