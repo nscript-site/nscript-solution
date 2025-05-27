@@ -17,7 +17,7 @@ vec4 main(vec2 fragCoord) {
     uv.x *= iResolution.x / iResolution.y;
 
     float len = length(uv);
-    float angle = atan(uv.y, uv.x);
+    float angle = atan(uv.y/ uv.x);
 
     // Garde le fallOff pour l'animation mais n'affecte pas la largeur de la ligne
     float fallOff = fract(-0.5 * (angle / pi) - iTime * 0.5);

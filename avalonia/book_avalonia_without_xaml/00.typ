@@ -86,6 +86,12 @@ nscript\@zhihu
 
 = 动画
 
+= 桌面应用
+
+= Android 应用
+
+= iOS 应用
+
 = wasm 应用
 
-= 移动应用
+= 使用 xaml
