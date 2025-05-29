@@ -1,6 +1,6 @@
 ﻿using NStyles.Controls;
 
-namespace Nui;
+namespace NewBeeUI;
 
 /// <summary>
 /// 基本的窗体类别

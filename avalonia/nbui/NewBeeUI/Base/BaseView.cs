@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Threading;
 using System.Windows.Input;
 
-namespace Nui;
+namespace NewBeeUI;
 
 public abstract class BaseView : MvuView
 {
@@ -109,19 +109,19 @@ public abstract class BaseView : MvuView
         return new StackPanel() { Orientation = Orientation.Vertical }.Align(hAlign, vAlign);
     }
 
-    //public static IconView SelectableIconButton(StreamGeometry g, string? tooltip = null, string? selectedTooltip = null, double scale = 0.8)
-    //{
-    //    return CreateSelectableIcon(new PathIcon().Data(g), tooltip, selectedTooltip, scale);
-    //}
+    public static IconView SelectableIconButton(StreamGeometry g, string? tooltip = null, string? selectedTooltip = null, double scale = 0.8)
+    {
+        return CreateSelectableIcon(new PathIcon().Data(g), tooltip, selectedTooltip, scale);
+    }
 
-    //public static IconView CreateSelectableIcon(PathIcon path, string? tooltip, string? selectedTooltip, double scale)
-    //{
-    //    var iconView = new IconView();
-    //    iconView.Path = path;
-    //    iconView.Tooltip = tooltip;
-    //    iconView.SelectedTooltip = selectedTooltip;
-    //    return iconView;
-    //}
+    public static IconView CreateSelectableIcon(PathIcon path, string? tooltip, string? selectedTooltip, double scale)
+    {
+        var iconView = new IconView();
+        iconView.Path = path;
+        iconView.Tooltip = tooltip;
+        iconView.SelectedTooltip = selectedTooltip;
+        return iconView;
+    }
 
     public static DynamicResourceExtension R(string key)
     {
@@ -155,11 +155,11 @@ public static class BaseViewExtensions
         public event EventHandler? CanExecuteChanged;
     }
 
-    public static T Observable<T,TProperty>(this T ctrl, AvaloniaProperty<TProperty?> property,Action<TProperty?> onUpdate ) where T : Control
-    {
-        ctrl.GetObservable(property).Subscribe(onUpdate);
-        return ctrl;
-    }
+    //public static T Observable<T,TProperty>(this T ctrl, AvaloniaProperty<TProperty?> property,Action<TProperty?> onUpdate ) where T : Control
+    //{
+    //    ctrl.GetObservable(property).Subscribe(onUpdate);
+    //    return ctrl;
+    //}
 
     public static TButton Text<TButton>(this TButton button, string text) where TButton : Button
     {

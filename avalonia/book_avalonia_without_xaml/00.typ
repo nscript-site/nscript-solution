@@ -76,7 +76,29 @@ nscript\@zhihu
 
 = 前言
 
+假设你有基本的 C\# 开发经验：
+
+- 了解 C\# 基本语法
+- 了解 .NET 框架
+- 了解 MVVM 模式
+
 = 第一个 Avalonia 应用
+
+== dotnet 环境
+
+== 开发工具
+
+=== Rider
+
+=== Visual Studio Code
+
+=== Visual Studio
+
+== NativeAOT
+
+== nuget
+
+= 数据绑定
 
 = 列表应用
 
@@ -95,3 +117,4 @@ nscript\@zhihu
 = wasm 应用
 
 = 使用 xaml
+

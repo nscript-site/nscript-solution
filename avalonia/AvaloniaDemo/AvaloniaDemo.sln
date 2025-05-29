@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaDemo.Desktop", "Ava
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaDemo.iOS", "AvaloniaDemo.iOS\AvaloniaDemo.iOS.csproj", "{614DFB0F-3A42-4BAD-DAB9-374F9533728A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nui", "..\nui\Nui\Nui.csproj", "{1FAC22DB-B3E3-474B-ADCA-0F6A623789B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewBeeUI", "..\nbui\NewBeeUI\NewBeeUI.csproj", "{99EB8235-184B-5AD7-E170-F8EAC8BAE79E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,10 +38,10 @@ Global
 		{614DFB0F-3A42-4BAD-DAB9-374F9533728A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{614DFB0F-3A42-4BAD-DAB9-374F9533728A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{614DFB0F-3A42-4BAD-DAB9-374F9533728A}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{1FAC22DB-B3E3-474B-ADCA-0F6A623789B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1FAC22DB-B3E3-474B-ADCA-0F6A623789B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1FAC22DB-B3E3-474B-ADCA-0F6A623789B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1FAC22DB-B3E3-474B-ADCA-0F6A623789B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99EB8235-184B-5AD7-E170-F8EAC8BAE79E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99EB8235-184B-5AD7-E170-F8EAC8BAE79E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99EB8235-184B-5AD7-E170-F8EAC8BAE79E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99EB8235-184B-5AD7-E170-F8EAC8BAE79E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
