@@ -1,3 +1,0 @@
-vec4 main(vec2 fragCoord) {
-    return vec4(iBase, iAlpha);
-}
