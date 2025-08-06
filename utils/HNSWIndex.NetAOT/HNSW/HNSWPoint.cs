@@ -1,20 +1,13 @@
-﻿using ProtoBuf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using MemoryPack;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HNSW;
 
-[ProtoContract]
-public class HNSWPoint
+[MemoryPackable]
+public partial class HNSWPoint
 {
-    [ProtoMember(1)]
     public float[] Data { get; set; } = Array.Empty<float>();
 
-    [ProtoMember(2)]
     public string Label { get; set; } = String.Empty;
 
     public static unsafe float CosineMetricUnitCompute(HNSWPoint a, HNSWPoint b)

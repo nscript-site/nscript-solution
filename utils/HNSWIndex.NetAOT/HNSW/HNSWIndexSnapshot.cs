@@ -1,23 +1,22 @@
 using System.Numerics;
-using ProtoBuf;
+using MemoryPack;
 
 namespace HNSW;
 
 /// <summary>
 /// Wrapper for HNSWIndex for serialization.
 /// </summary>
-[ProtoContract]
-internal class HNSWIndexSnapshot
+[MemoryPackable]
+public partial class HNSWIndexSnapshot
 {
-    [ProtoMember(1)]
-    internal HNSWParameters? Parameters { get; set; }
+    public HNSWParameters? Parameters { get; set; }
 
-    [ProtoMember(2)]
-    internal GraphDataSnapshot? DataSnapshot { get; set; }
+    public GraphDataSnapshot? DataSnapshot { get; set; }
 
-    internal HNSWIndexSnapshot() { }
+    [MemoryPackConstructor]
+    public HNSWIndexSnapshot() { }
 
-    internal HNSWIndexSnapshot(HNSWParameters parameters, GraphData data)
+    public HNSWIndexSnapshot(HNSWParameters parameters, GraphData data)
     {
         Parameters = parameters;
         DataSnapshot = new GraphDataSnapshot(data);

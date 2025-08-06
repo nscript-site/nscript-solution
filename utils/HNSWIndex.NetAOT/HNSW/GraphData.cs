@@ -9,7 +9,7 @@ namespace HNSW;
 /// All lock related members are ommitted from serialization 
 /// and should be initialized in deserialization constructor.
 /// </summary>
-internal class GraphData
+public class GraphData
 {
     internal event EventHandler<ReallocateEventArgs>? Reallocated;
 
@@ -48,7 +48,7 @@ internal class GraphData
     /// <summary>
     /// Constructor for the graph data.
     /// </summary>
-    internal GraphData(Func<HNSWPoint, HNSWPoint, float> distance, HNSWParameters parameters)
+    public GraphData(Func<HNSWPoint, HNSWPoint, float> distance, HNSWParameters parameters)
     {
         distanceFnc = distance;
         rng = parameters.RandomSeed < 0 ? new Random() : new Random(parameters.RandomSeed);
@@ -65,7 +65,7 @@ internal class GraphData
     /// <summary>
     /// Constructor for the graph data from serialization snapshot.
     /// </summary>
-    internal GraphData(GraphDataSnapshot snapshot, Func<HNSWPoint, HNSWPoint, float> distance, HNSWParameters parameters)
+    public GraphData(GraphDataSnapshot snapshot, Func<HNSWPoint, HNSWPoint, float> distance, HNSWParameters parameters)
     {
         distanceFnc = distance;
         rng = parameters.RandomSeed < 0 ? new Random() : new Random(parameters.RandomSeed);

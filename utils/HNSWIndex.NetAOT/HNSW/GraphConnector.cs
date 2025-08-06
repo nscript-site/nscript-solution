@@ -100,7 +100,7 @@ internal class GraphConnector
         for (int layer = Math.Min(currNode.MaxLayer, data.GetTopLayer()); layer >= 0; --layer)
         {
             var topCandidates = navigator.SearchLayer(bestPeer.Id, layer, parameters.MaxCandidates, distCalculator);
-            var bestNeighboursIds = parameters.Heuristic(topCandidates, data.Distance, data.MaxEdges(layer));
+            var bestNeighboursIds = Heuristic.DefaultHeuristic(topCandidates, data.Distance, data.MaxEdges(layer));
 
             for (int i = 0; i < bestNeighboursIds.Count; ++i)
             {
@@ -136,7 +136,7 @@ internal class GraphConnector
         var candidatesDistances = new List<NodeDistance>(candidates.Count);
         foreach (var neighbourId in candidates)
             candidatesDistances.Add(new NodeDistance { Dist = data.Distance(neighbourId, node.Id), Id = neighbourId });
-        var newNeighbours = parameters.Heuristic(candidatesDistances, data.Distance, data.MaxEdges(layer));
+        var newNeighbours = Heuristic.DefaultHeuristic(candidatesDistances, data.Distance, data.MaxEdges(layer));
         node.OutEdges[layer] = newNeighbours;
     }
 

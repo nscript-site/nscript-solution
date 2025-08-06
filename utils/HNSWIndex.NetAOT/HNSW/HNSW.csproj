@@ -8,17 +8,17 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageId>HNSWIndex</PackageId>
-    <Title>HNSWIndex</Title>
+    <PackageId>HNSWAot</PackageId>
+    <Title>HNSWAot</Title>
     <Version>1.4.1</Version>
-    <Authors>Mateusz Skarupski</Authors>
+    <Authors>Mateusz Skarupski;nscript</Authors>
     <Company />
     <Product>HNSWIndex</Product>
-    <Copyright>Copyright © Mateusz Skarupski 2025</Copyright>
+    <Copyright>Copyright © Mateusz Skarupski 2025; nscript-site</Copyright>
     <RepositoryType>git</RepositoryType>
     <PackageTags>HNSW;KNN;Similarity;Nearest Neighbor;Graph;High-Dimensional</PackageTags>
-    <RepositoryUrl>https://github.com/Skaipi/HNSWIndex.Net</RepositoryUrl>
-    <Description>HNSWIndex provides a high-performance, approximate nearest-neighbor search solution using the HNSW data structure. It supports custom distance metrics, efficient searching with concurrency, and configurable parameters to balance speed, recall, and memory usage. Perfect for .NET applications that require fast similarity lookups (e.g., image retrieval, recommendation systems, or vector-based search).</Description>
+    <RepositoryUrl>https://github.com/nscript-site/nscript-solution</RepositoryUrl>
+    <Description>HNSW provides a high-performance, approximate nearest-neighbor search solution using the HNSW data structure. It supports custom distance metrics, efficient searching with concurrency, and configurable parameters to balance speed, recall, and memory usage. Perfect for .NET applications that require fast similarity lookups (e.g., image retrieval, recommendation systems, or vector-based search).</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageOutputPath>bin\Release\</PackageOutputPath>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="protobuf-net" Version="3.2.52" />
+    <PackageReference Include="MemoryPack" Version="1.21.4" />
   </ItemGroup>
 
 </Project>

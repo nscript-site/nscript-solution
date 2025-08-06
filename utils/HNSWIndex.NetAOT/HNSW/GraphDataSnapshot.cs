@@ -1,33 +1,29 @@
+using MemoryPack;
 using System.Collections.Concurrent;
 using System.Numerics;
-using ProtoBuf;
 
 namespace HNSW;
 
 /// <summary>
 /// Wrapper for GraphData for serialization.
 /// </summary>
-[ProtoContract]
-internal class GraphDataSnapshot
+[MemoryPackable]
+public partial class GraphDataSnapshot
 {
-    [ProtoMember(1)]
-    internal List<Node>? Nodes { get; set; }
+    public List<Node>? Nodes { get; set; }
 
-    [ProtoMember(2)]
-    internal ConcurrentDictionary<int, HNSWPoint>? Items { get; set; }
+    public ConcurrentDictionary<int, HNSWPoint>? Items { get; set; }
 
-    [ProtoMember(3)]
-    internal Queue<int>? RemovedIndexes { get; set; }
+    public Queue<int>? RemovedIndexes { get; set; }
 
-    [ProtoMember(4)]
-    internal int EntryPointId = -1;
+    public int EntryPointId = -1;
 
-    [ProtoMember(5)]
-    internal int Capacity;
+    public int Capacity;
 
-    internal GraphDataSnapshot() { }
+    [MemoryPackConstructor]
+    public GraphDataSnapshot() { }
 
-    internal GraphDataSnapshot(GraphData data)
+    public GraphDataSnapshot(GraphData data)
     {
         Nodes = data.Nodes;
         Items = data.Items;

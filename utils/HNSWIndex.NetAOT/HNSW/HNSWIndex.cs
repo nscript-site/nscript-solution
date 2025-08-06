@@ -1,5 +1,5 @@
-﻿using System.Numerics;
-using ProtoBuf;
+﻿using MemoryPack;
+using System.Numerics;
 
 namespace HNSW;
 
@@ -170,11 +170,9 @@ public class HNSWIndex
     /// </summary>
     public void Serialize(string filePath)
     {
-        using (var file = File.Create(filePath))
-        {
-            var snapshot = new HNSWIndexSnapshot(parameters, data);
-            Serializer.Serialize(file, snapshot);
-        }
+        var snapshot = new HNSWIndexSnapshot(parameters, data);
+        var bytes = MemoryPackSerializer.Serialize(snapshot);
+        File.WriteAllBytes(filePath, bytes);
     }
 
     /// <summary>
@@ -182,11 +180,8 @@ public class HNSWIndex
     /// </summary>
     public static HNSWIndex Deserialize(Func<HNSWPoint, HNSWPoint, float> distFnc, string filePath)
     {
-        using (var file = File.OpenRead(filePath))
-        {
-            var snapshot = Serializer.Deserialize<HNSWIndexSnapshot>(file);
-            return new HNSWIndex(distFnc, snapshot);
-        }
+        var snapshot = MemoryPackSerializer.Deserialize<HNSWIndexSnapshot>(File.ReadAllBytes(filePath));
+        return new HNSWIndex(distFnc, snapshot);
     }
 
     private void OnDataResized(object? sender, ReallocateEventArgs e)

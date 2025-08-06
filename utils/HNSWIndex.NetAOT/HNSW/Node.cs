@@ -1,15 +1,16 @@
-﻿using ProtoBuf;
+﻿using MemoryPack;
 
 namespace HNSW;
 
-[ProtoContract]
-class Node
+[MemoryPackable]
+public partial class Node
 {
-    [ProtoMember(1)]
     public int Id;
 
+    [MemoryPackIgnore]
     public object OutEdgesLock { get; } = new();
 
+    [MemoryPackIgnore]
     public object InEdgesLock { get; } = new();
 
     public List<List<int>> OutEdges { get; set; } = new();
@@ -19,7 +20,6 @@ class Node
     public int MaxLayer => OutEdges.Count - 1;
 
     // Trick to serialize lists of lists
-    [ProtoMember(2, Name = nameof(OutEdges))]
     private List<IntListWrapper> OutEdgesSerialized
     {
         get => OutEdges.Select(l => new IntListWrapper(l)).ToList();
@@ -27,14 +27,12 @@ class Node
     }
 
     // Trick to serialize lists of lists
-    [ProtoMember(3, Name = nameof(InEdges))]
     private List<IntListWrapper> InEdgesSerialized
     {
         get => InEdges.Select(l => new IntListWrapper(l)).ToList();
         set => InEdges = (value ?? new List<IntListWrapper>()).Select(w => w.Values).ToList();
     }
 
-    [ProtoAfterDeserialization]
     private void AfterDeserialization()
     {
         for (int i = 0; i <= MaxLayer; i++)
@@ -45,11 +43,15 @@ class Node
     }
 }
 
-[ProtoContract]
-struct IntListWrapper
+[MemoryPackable]
+public partial struct IntListWrapper
 {
+    [MemoryPackConstructor]
+    public IntListWrapper()
+    {
+    }
+
     public IntListWrapper(List<int> values) => Values = values;
 
-    [ProtoMember(1)]
-    public List<int> Values;
+    public List<int> Values { get; set; }
 }

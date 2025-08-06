@@ -7,6 +7,7 @@ internal class Program
     static void Main(string[] args)
     {
         var vectors = HNSWPoint.Random(128, 2_000);
+        var vectors2 = HNSWPoint.Random(128, 1);
         var index = new HNSWIndex(HNSWPoint.CosineMetricUnitCompute);
 
         for (int i = 0; i < vectors.Count; i++)
@@ -15,8 +16,15 @@ internal class Program
         index.Serialize("GraphData.bin");
         var decodedIndex = HNSWIndex.Deserialize(HNSWPoint.CosineMetricUnitCompute, "GraphData.bin");
 
-        var originalResults = index.KnnQuery(vectors[0], 5);
-        var decodeResults = decodedIndex.KnnQuery(vectors[0], 5);
-        Console.WriteLine(decodeResults);
+        var originalResults = index.KnnQuery(vectors2[0], 5);
+        var decodeResults = decodedIndex.KnnQuery(vectors2[0], 5);
+        Console.WriteLine(decodeResults[0].Distance);
+        Console.WriteLine(originalResults[0].Distance);
+        Console.WriteLine(decodeResults[2].Distance);
+        Console.WriteLine(originalResults[2].Distance);
+        Console.WriteLine(decodeResults[0].Point.Data[0]);
+        Console.WriteLine(originalResults[0].Point.Data[0]);
+        Console.WriteLine(decodeResults[0].Point.Label);
+        Console.WriteLine(originalResults[0].Point.Label);
     }
 }
