@@ -1,4 +1,6 @@
 ﻿using MemoryPack;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Numerics;
 
 namespace HNSW;
@@ -110,6 +112,11 @@ public class HNSWIndex
         });
     }
 
+    public int Count
+    {
+        get { return data.Items.Count; }
+    }
+
     /// <summary>
     /// Get list of items inserted into the graph structure
     /// </summary>
@@ -168,20 +175,102 @@ public class HNSWIndex
     /// <summary>
     /// Serialize the graph snapshot image to a file.
     /// </summary>
-    public void Serialize(string filePath)
+    public void Serialize(string filePath, int sliceMaxCount = 500000)
     {
+        var indexData = Serialize(sliceMaxCount);
+        File.WriteAllBytes(filePath, indexData.Body);
+        int num = 0;
+        foreach(var item in indexData.ItemSlices)
+        {
+            File.WriteAllBytes($"{filePath}.{num}.items", item);
+            num++;
+        }
+        num = 0;
+        foreach (var item in indexData.NodeSlices)
+        {
+            File.WriteAllBytes($"{filePath}.{num}.nodes", item);
+            num++;
+        }
+    }
+
+    public HNSWIndexData Serialize(int sliceMaxCount = 500000)
+    {
+        var indexData = new HNSWIndexData();
+
         var snapshot = new HNSWIndexSnapshot(parameters, data);
-        var bytes = MemoryPackSerializer.Serialize(snapshot);
-        File.WriteAllBytes(filePath, bytes);
+        if(snapshot.NeedSlice(sliceMaxCount))
+        {
+            var slices = snapshot.Slice(sliceMaxCount);
+            foreach(var item in slices.Item1)
+            {
+                indexData.ItemSlices.Add(MemoryPackSerializer.Serialize(item));
+            }
+            foreach(var item in slices.Item2)
+            {
+                indexData.NodeSlices.Add(MemoryPackSerializer.Serialize(item));
+            }
+        }
+        indexData.Body = MemoryPackSerializer.Serialize(snapshot);
+        return indexData;
     }
 
     /// <summary>
     /// Reconstruct the graph from a serialized snapshot image.
     /// </summary>
-    public static HNSWIndex Deserialize(Func<HNSWPoint, HNSWPoint, float> distFnc, string filePath)
+    public static HNSWIndex? Deserialize(Func<HNSWPoint, HNSWPoint, float> distFnc, string filePath, List<string>? itemSliceFilePaths = null, List<string>? nodeSliceFilePaths = null)
     {
-        var snapshot = MemoryPackSerializer.Deserialize<HNSWIndexSnapshot>(File.ReadAllBytes(filePath));
-        return new HNSWIndex(distFnc, snapshot);
+        HNSWIndexData indexData = new HNSWIndexData();
+        indexData.Body = File.ReadAllBytes(filePath);
+        if(itemSliceFilePaths != null)
+        {
+            foreach(var path in itemSliceFilePaths)
+            {
+                indexData.ItemSlices.Add(File.ReadAllBytes(path));
+            }
+        }
+        if(nodeSliceFilePaths != null)
+        {
+            foreach (var path in nodeSliceFilePaths)
+            {
+                indexData.NodeSlices.Add(File.ReadAllBytes(path));
+            }
+        }
+        return Deserialize(distFnc, indexData);
+    }
+
+    public static HNSWIndex? Deserialize(Func<HNSWPoint, HNSWPoint, float> distFnc, byte[] buff)
+    {
+        var snapshot = MemoryPackSerializer.Deserialize<HNSWIndexSnapshot>(buff);
+        return snapshot == null ? null : new HNSWIndex(distFnc, snapshot);
+    }
+
+    public static HNSWIndex? Deserialize(Func<HNSWPoint, HNSWPoint, float> distFnc, HNSWIndexData indexData)
+    {
+        var snapshot = MemoryPackSerializer.Deserialize<HNSWIndexSnapshot>(indexData.Body);
+        List<ItemSlice> itemSlices = new List<ItemSlice>();
+        List<NodeSlice> nodeSlices = new List<NodeSlice>();
+
+        if(indexData.ItemSlices != null)
+        {
+            foreach(var item in indexData.ItemSlices)
+            {
+                var slice = MemoryPackSerializer.Deserialize<ItemSlice>(item);
+                if(slice != null) itemSlices.Add(slice);
+            }
+        }
+
+        if(indexData.NodeSlices != null)
+        {
+            foreach (var item in indexData.NodeSlices)
+            {
+                var slice = MemoryPackSerializer.Deserialize<NodeSlice>(item);
+                if (slice != null) nodeSlices.Add(slice);
+            }
+        }
+
+        snapshot?.Merge(itemSlices, nodeSlices);
+
+        return snapshot == null ? null : new HNSWIndex(distFnc, snapshot);
     }
 
     private void OnDataResized(object? sender, ReallocateEventArgs e)

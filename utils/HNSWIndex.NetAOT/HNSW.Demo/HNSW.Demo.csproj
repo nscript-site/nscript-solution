@@ -17,6 +17,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <TrimmerRootAssembly Include="HNSW" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\HNSW\HNSW.csproj" />
   </ItemGroup>
 

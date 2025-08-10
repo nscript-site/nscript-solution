@@ -112,7 +112,7 @@ public class GraphData
         Items.TryAdd(vacantId, item);
         if (Nodes.Count > Capacity)
         {
-            Capacity = Nodes.Capacity;
+            Capacity = Nodes.Capacity + Capacity/2;
             Reallocated?.Invoke(this, new ReallocateEventArgs(Capacity));
         }
         return vacantId;

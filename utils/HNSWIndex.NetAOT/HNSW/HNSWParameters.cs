@@ -23,7 +23,7 @@ public partial class HNSWParameters
     /// <summary>
     /// Maximum number of nodes taken as candidates for neighbour check during insertion
     /// </summary>
-    public int MaxCandidates { get; set; } = 100;
+    public int MaxCandidates { get; set; } = 1000;
 
     /// <summary>
     /// Expected amount of nodes in the graph.

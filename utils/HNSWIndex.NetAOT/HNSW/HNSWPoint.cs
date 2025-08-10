@@ -1,4 +1,5 @@
 ﻿using MemoryPack;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace HNSW;
@@ -35,7 +36,7 @@ public partial class HNSWPoint
         }
     }
 
-    public static List<HNSWPoint> Random(int vectorSize, int vectorsCount)
+    public static List<HNSWPoint> Random(int vectorSize, int vectorsCount, bool normalize = true)
     {
         var random = new Random(vectorsCount);
         var vectors = new List<HNSWPoint>();
@@ -45,6 +46,8 @@ public partial class HNSWPoint
             var vector = new float[vectorSize];
             for (int d = 0; d < vectorSize; d++)
                 vector[d] = random.NextSingle();
+            if(normalize == true)
+                Normalize(vector);
             vectors.Add(new HNSWPoint() { Data = vector, Label = i.ToString() });
         }
 
