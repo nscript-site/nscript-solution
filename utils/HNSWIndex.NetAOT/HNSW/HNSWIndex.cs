@@ -1,7 +1,4 @@
 ﻿using MemoryPack;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Numerics;
 
 namespace HNSW;
 
@@ -84,6 +81,20 @@ public class HNSWIndex
             idArray[i] = Add(items[i]);
         });
         return idArray;
+    }
+
+    public void BatchAdd(List<HNSWPoint> items, int batchSize = 100)
+    {
+        if (items.Count == 0) return;
+        int total = items.Count;
+        int batches = (total + batchSize - 1) / batchSize; // 向上取整
+        for (int i = 0; i < batches; i++)
+        {
+            int start = i * batchSize;
+            int end = Math.Min(start + batchSize, total);
+            var batchItems = items.GetRange(start, end - start);
+            Add(batchItems);
+        }
     }
 
     /// <summary>
@@ -177,20 +188,16 @@ public class HNSWIndex
     /// </summary>
     public void Serialize(string filePath, int sliceMaxCount = 500000)
     {
+        using(FileStream fs = new FileStream(filePath, FileMode.Create))
+        {
+            Serialize(fs, sliceMaxCount);
+        }
+    }
+
+    public void Serialize(Stream stream, int sliceMaxCount = 500000)
+    {
         var indexData = Serialize(sliceMaxCount);
-        File.WriteAllBytes(filePath, indexData.Body);
-        int num = 0;
-        foreach(var item in indexData.ItemSlices)
-        {
-            File.WriteAllBytes($"{filePath}.{num}.items", item);
-            num++;
-        }
-        num = 0;
-        foreach (var item in indexData.NodeSlices)
-        {
-            File.WriteAllBytes($"{filePath}.{num}.nodes", item);
-            num++;
-        }
+        HNSWIndexStreamSerializer.Serialize(indexData, stream);
     }
 
     public HNSWIndexData Serialize(int sliceMaxCount = 500000)
@@ -217,31 +224,24 @@ public class HNSWIndex
     /// <summary>
     /// Reconstruct the graph from a serialized snapshot image.
     /// </summary>
-    public static HNSWIndex? Deserialize(Func<HNSWPoint, HNSWPoint, float> distFnc, string filePath, List<string>? itemSliceFilePaths = null, List<string>? nodeSliceFilePaths = null)
+    public static HNSWIndex? Deserialize(Func<HNSWPoint, HNSWPoint, float> distFnc, string filePath)
     {
-        HNSWIndexData indexData = new HNSWIndexData();
-        indexData.Body = File.ReadAllBytes(filePath);
-        if(itemSliceFilePaths != null)
+        using(FileStream fs = new FileStream(filePath, FileMode.Open))
         {
-            foreach(var path in itemSliceFilePaths)
-            {
-                indexData.ItemSlices.Add(File.ReadAllBytes(path));
-            }
+            return Deserialize(distFnc, fs);
         }
-        if(nodeSliceFilePaths != null)
-        {
-            foreach (var path in nodeSliceFilePaths)
-            {
-                indexData.NodeSlices.Add(File.ReadAllBytes(path));
-            }
-        }
-        return Deserialize(distFnc, indexData);
     }
 
     public static HNSWIndex? Deserialize(Func<HNSWPoint, HNSWPoint, float> distFnc, byte[] buff)
     {
-        var snapshot = MemoryPackSerializer.Deserialize<HNSWIndexSnapshot>(buff);
-        return snapshot == null ? null : new HNSWIndex(distFnc, snapshot);
+        using (MemoryStream ms = new MemoryStream(buff))
+            return Deserialize(distFnc, ms);
+    }
+
+    public static HNSWIndex? Deserialize(Func<HNSWPoint, HNSWPoint, float> distFnc, Stream stream)
+    {
+        HNSWIndexData indexData = HNSWIndexStreamSerializer.Deserialize(stream);
+        return Deserialize(distFnc, indexData);
     }
 
     public static HNSWIndex? Deserialize(Func<HNSWPoint, HNSWPoint, float> distFnc, HNSWIndexData indexData)

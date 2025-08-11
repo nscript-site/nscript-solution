@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.IO.Compression;
-using System.Numerics;
+﻿using System.IO.Compression;
 
 namespace HNSW.Demo;
 
@@ -8,33 +6,51 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        //bool nomalize = true;
-        //var vectors = HNSWPoint.Random(128, 2_000, nomalize);
-        //var vectors2 = HNSWPoint.Random(128, 1, nomalize);
-        //var index = new HNSWIndex(HNSWPoint.CosineMetricUnitCompute);
+        Test(2000, 5000, true);
+        Test(20000, 5000, true);
+    }
 
-        //for (int i = 0; i < vectors.Count; i++)
-        //    index.Add(vectors[i]);
+    static void Test(int total, int sliceMaxCount, bool nomalize = true)
+    {
+        Console.WriteLine($"[RUN TEST]: total - {total}, slice - {sliceMaxCount}, nomalize - {nomalize}");
 
-        //index.Serialize("GraphData.bin");
-        //var decodedIndex = HNSWIndex.Deserialize(HNSWPoint.CosineMetricUnitCompute, "GraphData.bin");
+        var vectors = HNSWPoint.Random(128, total, nomalize);
+        var vectors2 = HNSWPoint.Random(128, 1, nomalize);
 
-        //var originalResults = index.KnnQuery(vectors2[0], 5);
-        //var decodeResults = decodedIndex.KnnQuery(vectors2[0], 5);
-        //Console.WriteLine($"nomalize: {nomalize}");
-        //Console.WriteLine(decodeResults[0].Distance);
-        //Console.WriteLine(originalResults[0].Distance);
-        //Console.WriteLine(decodeResults[2].Distance);
-        //Console.WriteLine(originalResults[2].Distance);
-        //Console.WriteLine(decodeResults[0].Point.Data[0]);
-        //Console.WriteLine(originalResults[0].Point.Data[0]);
-        //Console.WriteLine(decodeResults[0].Point.Label);
-        //Console.WriteLine(originalResults[0].Point.Label);
+        Console.WriteLine($"{total} points generated");
 
-        //var r1 = index.KnnQuery(vectors[0], 5);
-        //Console.WriteLine(r1[0].Distance);
+        var index = new HNSWIndex(HNSWPoint.CosineMetricUnitCompute);
 
-        Load("D:\\测试数据\\im\\StockPhotos(CC0)\\meta.omnivdat");
+        index.BatchAdd(vectors, 100);
+
+        Console.WriteLine($"index generated");
+
+        var dataFile = $"GraphData_{total}_{sliceMaxCount}.bin";
+
+        Console.WriteLine($"index deserialized");
+
+        index.Serialize(dataFile, sliceMaxCount);
+
+        Console.WriteLine($"index serialized");
+
+        var originalResults = index.KnnQuery(vectors2[0], 5);
+        Console.WriteLine("originalResults:");
+        Console.WriteLine(originalResults[0].Distance);
+        Console.WriteLine(originalResults[2].Distance);
+        Console.WriteLine(originalResults[0].Point.Data[0]);
+        Console.WriteLine(originalResults[0].Point.Label);
+
+        var decodedIndex = HNSWIndex.Deserialize(HNSWPoint.CosineMetricUnitCompute, dataFile);
+
+        if (decodedIndex != null)
+        {
+            var decodeResults = decodedIndex.KnnQuery(vectors2[0], 5);
+            Console.WriteLine("decodeResults:");
+            Console.WriteLine(decodeResults[0].Distance);
+            Console.WriteLine(decodeResults[2].Distance);
+            Console.WriteLine(decodeResults[0].Point.Data[0]);
+            Console.WriteLine(decodeResults[0].Point.Label);
+        }
     }
 
     private static string ClipIndexEntry = "clip.idx";

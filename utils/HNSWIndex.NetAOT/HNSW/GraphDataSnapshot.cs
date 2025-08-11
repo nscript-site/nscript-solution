@@ -74,7 +74,7 @@ public partial class GraphDataSnapshot
                 }
             }
 
-            Items.Clear();
+            Items = null;
             if (slice.Count > 0)
                 list.Add(slice);
         }
@@ -110,7 +110,7 @@ public partial class GraphDataSnapshot
                     slice = new NodeSlice();
                 }
             }
-            Nodes.Clear();
+            Nodes = null;
             if (slice.Nodes.Count > 0)
                 list.Add(slice);
         }
