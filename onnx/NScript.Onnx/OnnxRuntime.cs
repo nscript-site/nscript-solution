@@ -134,4 +134,12 @@ public class OnnxRuntime
         model.InitModel(modelPath, numThread);
         return model;
     }
+
+    public OnnxModel CreateModel(byte[] modelData, int numThread = 2)
+    {
+        var model = new OnnxModel() { Runtime = this };
+        model.InitModel(modelData, numThread);
+        return model;
+    }
+
 }

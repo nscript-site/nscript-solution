@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.DirectML" Version="1.22.1" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.18.1" />
+    <ProjectReference Include="..\NScript.Onnx\NScript.Onnx.csproj" />
+  </ItemGroup>
+
+</Project>

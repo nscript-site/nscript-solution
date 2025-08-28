@@ -1,10 +1,5 @@
 ﻿using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NScript.Onnx;
 
@@ -24,18 +19,29 @@ public class OnnxModel : IDisposable
     public string FirstInputName { get; private set; } = String.Empty;
     public string FirstOutputName { get; private set; } = String.Empty;
 
-    public void InitModel(string modelPath, int numThread)
+    internal void InitModel(string modelPath, int numThread)
+    {
+        model = CreateModel(Runtime, modelPath, numThread);
+        LoadModel(numThread);
+    }
+
+    internal void InitModel(byte[] modelData, int numThread)
+    {
+        model = CreateModel(Runtime, modelData, numThread);
+        LoadModel(numThread);
+    }
+
+    private void LoadModel(int numThread)
     {
         try
         {
-            model = CreateModel(Runtime, modelPath, numThread);
             InputNames = model.InputNames;
             OutputNames = model.OutputNames;
             Inputs = model.InputMetadata;
             Outputs = model.OutputMetadata;
 
             if (InputNames.Count > 0) FirstInputName = InputNames[0];
-            if (OutputNames.Count > 0) FirstOutputName = OutputNames[0]; 
+            if (OutputNames.Count > 0) FirstOutputName = OutputNames[0];
         }
         catch (Exception ex)
         {
@@ -46,7 +52,7 @@ public class OnnxModel : IDisposable
                 Console.WriteLine(ex.InnerException.Message);
                 Console.WriteLine(ex.InnerException.StackTrace);
             }
-            throw ex;
+            throw;
         }
     }
 
@@ -87,6 +93,13 @@ public class OnnxModel : IDisposable
         Console.WriteLine("[OnnxRuntime] Load Model: " + path);
 
         model = new InferenceSession(path, runtime.CreateSessionOptions());
+        return model;
+    }
+
+    public static InferenceSession CreateModel(OnnxRuntime runtime, byte[] modelBytes, int numThread)
+    {
+        Console.WriteLine($"[OnnxRuntime] Load Model from buff: {modelBytes.Length} bytes");
+        var model = new InferenceSession(modelBytes, runtime.CreateSessionOptions());
         return model;
     }
 

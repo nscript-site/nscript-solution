@@ -11,7 +11,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Title>NScript.Onnx</Title>
     <Description>一个简单的 Onnx helper 库，可以简化 onnx 相关应用的开发</Description>
-    <VersionPrefix>1.0.0.1</VersionPrefix>
+    <VersionPrefix>1.0.0.4</VersionPrefix>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.18.0" />
